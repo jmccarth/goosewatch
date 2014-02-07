@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=7,IE=9">
+		<!--The viewport meta tag is used to improve the presentation and behavior of the samples 
+		  on iOS devices-->
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+		<title>Goose Nest Avoider (Beta)</title>
+
+		<link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.4/js/dojo/dijit/themes/claro/claro.css">
+		<link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.4/js/esri/css/esri.css">
+		<link rel="stylesheet" href="http://download.dojotoolkit.org/release-1.8.3/dojo-release-1.8.3/dojox/mobile/themes/common/domButtons.css">
+		<link rel="stylesheet" href="http://download.dojotoolkit.org/release-1.8.3/dojo-release-1.8.3/dojox/mobile/themes/iphone/iphone-compat.css">
+		<script type="text/javascript" src="http://download.dojotoolkit.org/release-1.8.3/dojo-release-1.8.3/dojox/mobile/deviceTheme.js" data-dojo-config="mblThemeFiles: ['base','SimpleDialog','Button','Slider']"></script>
+		
+		<script type="text/javascript">
+		  var djConfig = {
+			parseOnLoad: true
+		  };
+		</script>
+
+		<style>
+		  html, body, #mapDiv {
+			padding:0;
+			margin:0;
+			height:100%;
+		  }
+			
+		  .mblSimpleDialogButton {
+			  margin: 7px 0 0;
+			  width: 262px;
+			  font-size: 17px;
+			  font-weight: bold;
+			  opacity: 0.95;
+			}
+			.mblSimpleDialogButton2l {
+			  float: left;
+			  width: 127px;
+			  margin: 7px 0 0;
+			  font-size: 17px;
+			  font-weight: bold;
+			  opacity: 0.95;
+			}
+			.mblSimpleDialogButton2r {
+			  float: right;
+			  width: 127px;
+			  margin: 7px 0 0;
+			  font-size: 17px;
+			  font-weight: bold;
+			  opacity: 0.95;
+			}
+			.mblSimpleDialog .mblProgressIndicator {
+			  position: relative;
+			  margin: 14px 0 7px;
+			  top: 0;
+			}
+			
+			     @-webkit-keyframes
+       pulse
+      {
+        0%
+        {
+          opacity: 1.0;
+
+        }
+        45%
+        {
+          opacity: .20;
+
+        }
+        100%
+        {
+          opacity: 1.0;
+
+        }
+      }
+     @-moz-keyframes
+       pulse
+      {
+        0%
+        {
+          opacity: 1.0;
+        }
+        45%
+        {
+          opacity: .20;
+
+        }
+        100%
+        {
+          opacity: 1.0;
+        }
+      }
+
+      #graphicsLayer1_layer {
+        -webkit-animation-duration: 3s;
+        -webkit-animation-iteration-count: infinite;
+        -webkit-animation-name: pulse;
+        -moz-animation-duration: 3s;
+        -moz-animation-iteration-count: infinite;
+        -moz-animation-name: pulse;
+      }
+		</style>
+		
+		<script src="http://serverapi.arcgisonline.com/jsapi/arcgis/3.4compact"></script>
+		<script>
+			//dojo, dijit, esri imports
+			require([
+				"dijit/registry",
+				"dojox/mobile",
+				"dojox/mobile/parser",
+				"dojox/mobile/SimpleDialog",
+				"dojox/mobile/Button",
+				"dojox/mobile/ProgressIndicator",
+				"dojox/mobile/Slider",
+				"dojox/mobile/deviceTheme",
+				"dojo/number",
+				"dojo/io/script",
+				"dojo/_base/array",
+				"dijit/Dialog",
+				"dijit/form/Select",
+				"dijit/TooltipDialog",
+				"esri/map",
+				"esri/layers/FeatureLayer",
+				"esri/layers/graphics",
+				"esri/tasks/route",
+				"esri/tasks/geometry",
+				"esri/tasks/FeatureSet",
+				"esri/dijit/Attribution"
+			], function(registry){
+				show = function(dlg){
+					registry.byId(dlg).show();
+				};
+				hide = function(dlg){
+					registry.byId(dlg).hide();
+				};
+			});
+
+			var map, uwRooms;
+			var routeTask, routeParams, routeSymbol;
+			var stopSymbol;
+			var gsvc;
+			var buldings;
+			var currLocation, graphic;
+			var watchId;
+			var useLocation;
+			var routeResult;
+			var findRoute = true;
+			var offCampusBuildings = ["AAC","AAR","ARC","GA","HSC","IHB","IQC","PHR","WSS","UAE"];
+			var outdoorNetwork;
+			var bufferDist = 15;
+			var gooseFeatures;
+			var nestBuffers = [];
+			var params;
+			var bufferGraphics;
+			
+
+			function init() {
+				enableLocation(); //Try and start geolocation
+				buildings = new esri.tasks.FeatureSet(); //Holds building features created from API data
+				gooseFeatures = new esri.tasks.FeatureSet();
+				nestBuffers.push(new esri.tasks.FeatureSet());
+				nestBuffers.push(new esri.tasks.FeatureSet());
+				nestBuffers.push(new esri.tasks.FeatureSet());
+				gsvc = new esri.tasks.GeometryService("http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+
+				//Create the map
+				map = new esri.Map("mapDiv", {
+				  basemap: "topo",
+				  center: [-80.542, 43.471],
+				  zoom: 16,
+				  showAttribution: true
+				});
+				
+				outdoorNetwork = new esri.layers.FeatureLayer("http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Campus/uw_route/MapServer/8?token=TYzfW_6JlqmPBIFgs7dWoUCDSp1m9iZnMe4cNc8hwIqyEBSAMawjmGOV9DrsnygpHnMKyT6S3QRM6X37OxyIYg..")
+				
+				//Set up routing parameters
+				routeTask = new esri.tasks.RouteTask("http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Campus/uw_route/NAServer/Route?token=TYzfW_6JlqmPBIFgs7dWoUCDSp1m9iZnMe4cNc8hwIqyEBSAMawjmGOV9DrsnygpHnMKyT6S3QRM6X37OxyIYg..");
+				routeParams = new esri.tasks.RouteParameters();
+				routeParams.stops = new esri.tasks.FeatureSet();
+				routeParams.polygonBarriers = new esri.tasks.FeatureSet();
+				routeParams.returnPolygonBarriers = true;
+				routeParams.outSpatialReference = {"wkid":102100};
+				routeParams.doNotLocateOnRestrictedElements = true;
+				
+				dojo.connect(routeTask, "onSolveComplete", showRoute);
+				dojo.connect(routeTask, "onError", errorHandler);
+				
+				//Set up routing symbology
+				stopSymbol = new esri.symbol.SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_X).setSize(15);
+				stopSymbol.outline.setWidth(3);
+		
+				routeSymbol = new esri.symbol.SimpleLineSymbol().setColor(new dojo.Color([0,0,255,0.5])).setWidth(4);
+				results = new esri.layers.GraphicsLayer();
+				
+				bufferGraphics = new esri.layers.GraphicsLayer();
+				
+				//TODO: set up proxy on env-gisdev
+				esri.config.defaults.io.proxyUrl = "http://env-gisdev.uwaterloo.ca/proxy.ashx";
+				
+				
+				//Show the form that lets users pick buildings
+				//Go get the building and goose data
+				dojo.connect(map,"onLoad",function(){
+					show('setupRoute');
+					dojo.io.script.get({
+						url: "http://api.uwaterloo.ca/public/v1/?key=***REMOVED***&service=GooseWatch&output=json&callback=mapGeese&jsonp=?"
+					});
+					dojo.io.script.get({
+						url: "http://api.uwaterloo.ca/public/v1/?key=***REMOVED***&service=Buildings&output=json&callback=populateBuildings&jsonp=?"
+					});
+				});
+				
+				map.addLayers([uwRooms,bufferGraphics,results]);
+				
+			}
+		  
+			/**
+				populateBuildings
+				Goes through the JSON response of building points, builds the 2 pick lists,
+				and the featureset object to hold all buildings not in the offCampusBuildings list
+			*/
+			function populateBuildings(data){
+				dojo.forEach(data.response.data.result,function(value,index){
+					bldg = value.Acronym;
+					if (offCampusBuildings.indexOf(bldg) == -1){
+						bldgDesc = value.Acronym + " (" + value.Name + ")";
+						dojo.byId("buildingSelectorA").options.add(new Option(bldgDesc,bldg));
+						dojo.byId("buildingSelectorB").options.add(new Option(bldgDesc,bldg));
+						
+						var pt = new esri.geometry.Point(value.Longitude,value.Latitude);
+						var sym = new esri.symbol.SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_SQUARE).setColor(new dojo.Color([255,0,0,0.5]));
+						var attr = {"Acronym":value.Acronym,"Name":value.Name};
+						var b = new esri.Graphic(pt,sym,attr);
+						buildings.features.push(b);
+					}
+				});
+			}
+			
+			/**
+				mapGeese
+				Go through the JSON response of goose nests from the uWaterloo API, create a symbol for each,
+				buffer it, and add the buffers to the routing problem parameters
+			*/
+			function mapGeese(data){
+				//Set up goose nest symbol
+				var symbol = new esri.symbol.SimpleMarkerSymbol(esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE, 12, 
+				  new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID,
+				  new dojo.Color([210, 105, 30,0]), 1), 
+				  new dojo.Color([210, 105, 30,0]));
+
+				var sfs = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID,new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID,
+							new dojo.Color([210, 105, 30, 0.5]), 8),new dojo.Color([210, 105, 30, 0.9]));
+							
+				dojo.forEach(data.response.data.result, function(value, index){
+					//Get goose nest info
+					lat = value.Latitude;
+					lon = value.Longitude;
+					desc = value.Location;
+					
+					//Create graphic and add to map
+					var infoTemplate = new esri.InfoTemplate("Goose Nest", desc);
+					pt = new esri.geometry.Point(lon,lat);
+					graphic = new esri.Graphic(pt, symbol);
+					graphic.setInfoTemplate(infoTemplate);
+					map.graphics.add(graphic)
+					gooseFeatures.features.push(graphic);
+		
+					//Set up buffer parameters
+					params = new esri.tasks.BufferParameters();
+					params.distances = [ 12, 20, 30 ];
+					params.unit = esri.tasks.GeometryService.UNIT_METER;
+					params.bufferSpatialReference = new esri.SpatialReference({wkid: 102100});
+					params.outSpatialReference = map.spatialReference;			
+					params.geometries  = [ pt ];
+					
+					var buildInfoTemplate = function(nestDesc){
+						return function(bufResults){
+							var bufGraphic = new esri.Graphic(bufResults[dojo.byId("fearSlider").getAttribute("aria-valuenow")],sfs);
+							routeParams.polygonBarriers.features.push(bufGraphic);	
+							var bufInfoTemplate = new esri.InfoTemplate("Goose Nest", nestDesc);
+							//nestBuffers.features.push(bufGraphic);
+							bufferGraphics.add(bufGraphic);
+							nestBuffers[0].features.push(new esri.Graphic(bufResults[0],sfs).setInfoTemplate(bufInfoTemplate));
+							nestBuffers[1].features.push(new esri.Graphic(bufResults[1],sfs).setInfoTemplate(bufInfoTemplate));
+							nestBuffers[2].features.push(new esri.Graphic(bufResults[2],sfs).setInfoTemplate(bufInfoTemplate));
+						};
+					};
+					
+					//Buffer the features and add the results as barriers to the routing task
+					gsvc.buffer(params,buildInfoTemplate(desc));
+					
+				});
+			}
+		
+			
+		
+			/**
+				generateRoute
+				Handles the task of routing between stops
+			*/
+			function generateRoute(){
+				//Hide the form
+				hide('setupRoute');
+				
+				//Show progress dialog
+				show('loadingDialog');
+				
+				//Go ahead with routing unless we find a condition that makes us stop
+				findRoute = true;
+				
+				//Clear any previous routes
+				resetRouting();
+				updateBufferDist();
+				
+				//What are the start and end buildings?
+				buildingA = dojo.byId("buildingSelectorA").value;
+				buildingB = dojo.byId("buildingSelectorB").value;
+				
+				if (buildingA == "gps"){
+					//User wants to use their device location
+					//Check if the user is within the extent of the network
+					if(outdoorNetwork.fullExtent.contains(currLocation)){
+						useLocation = true;
+					}
+					else{
+						alert("Sorry, your device is reporting a location that is not on campus. To find a route, please choose a buliding as your 'From:' location.");
+						useLocation = false;
+						findRoute = false;
+						hide('loadingDialog');
+						show('setupRoute');
+					}
+				}
+				else{
+					//User wants to use a building
+					useLocation = false;
+				}
+				
+				//User has not specified a building
+				if (buildingA == ""){
+					alert("Please select a valid start location");
+					hide('loadingDialog');
+					show('setupRoute');
+					findRoute = false;
+				}
+				if (buildingB == ""){
+					alert("Please select a valid end location");
+					hide('loadingDialog');
+					show('setupRoute');
+					findRoute = false;
+				}
+				
+				//Make sure buildings aren't the same
+				if (buildingA == buildingB && buildingA != ""){
+					alert("Your start and end location must be different");
+					hide('loadingDialog');
+					show('setupRoute');
+					findRoute = false;
+				}
+				
+				//All is OK above, so find the route
+				if (findRoute){
+					if (useLocation == true){
+						//if using 1 building and device location
+						dojo.forEach(buildings.features, function(value,index){
+							if (value.attributes.Acronym == buildingB){
+								//Once the building is found add it as a stop
+								addStop(value);
+								//Make a graphic out of the user's most recent location and add it as a stop
+								var g = new esri.Graphic(esri.geometry.webMercatorToGeographic(currLocation))
+								addStop(g);
+							}
+						});
+					}
+					
+					else if (useLocation == false){
+						// if using 2 buildings
+						dojo.forEach(buildings.features, function(value,index){
+							if (value.attributes.Acronym == buildingA || value.attributes.Acronym == buildingB){
+								//When a buliding is found add it as a stop
+								addStop(value);
+							}
+						});
+					}
+				}
+			}
+			
+			/**
+				resetRouting
+				Reset any parameters needed to create a new route
+			*/
+			function resetRouting(){
+				useLocation = "";
+				routeParams.stops = new esri.tasks.FeatureSet();
+				results.clear();
+			}
+			
+			/**
+				addStop
+				Takes a graphic and adds it as a stop to the routing problem. When there are two stops added,
+				launch the routing task.
+			*/
+			function addStop(stop){
+				var barriersToRemove = [];
+				s = results.add(new esri.Graphic(esri.geometry.geographicToWebMercator(stop.geometry),stopSymbol));
+				routeParams.stops.features.push(s);
+				if (routeParams.stops.features.length >= 2){
+					//Loop through polygon barriers and check if they contain the start or end point. If so, remove them.
+					dojo.forEach(routeParams.polygonBarriers.features,function(barrier,index){
+						if(barrier.geometry.contains(routeParams.stops.features[0].geometry) || barrier.geometry.contains(routeParams.stops.features[1].geometry)){
+							barriersToRemove.push(index);
+						}
+					});
+					dojo.forEach(barriersToRemove.reverse(),function(bIndex){ //Must reverse list of features to remove to avoid screwing up indices
+						routeParams.polygonBarriers.features.splice(bIndex,1);
+					});
+					if(barriersToRemove.length > 0){
+						alert("Note, your start or end point is close to a goose nest. Proceed with caution.");
+					}
+					routeTask.solve(routeParams);
+				}
+			}
+			
+			/**
+				showRoute
+				Called when the route is successfully solved. Displays resulting route on map
+				and sets the map's extent to show the entire route.
+			*/
+			function showRoute(solveResult){
+				hide('loadingDialog');
+				
+				results.add(solveResult.routeResults[0].route.setSymbol(routeSymbol));
+				map.setExtent(solveResult.routeResults[0].route.geometry.getExtent(),true);
+			}
+			
+			/**
+				errorHandler
+				Called when something goes wrong with the route.
+			*/
+			function errorHandler(err){
+				hide('loadingDialog');
+				//alert("An error occured\n" + err.message + "\n" + err.details.join("\n"));
+				if(useLocation){				
+					var bldgB = dojo.byId("buildingSelectorB").value;
+					alert("A route could not be found between (" + currLocation.x + ", " + currLocation.y + ") and " + bldgB);
+				}
+				else{
+					var bldgA = dojo.byId("buildingSelectorA").value;
+					var bldgB = dojo.byId("buildingSelectorB").value;
+					alert("A route could not be found between " + bldgA + " and " + bldgB);
+				}
+					
+				routeParams.stops = new esri.tasks.FeatureSet();
+				map.graphics.clear();
+				resetRouting();
+			}
+			
+			/**
+				enableLocation
+				Used when a user opts in to sharing their location with the page.
+				Kicks off geolocation tracking if supported by their browser/device.
+			*/
+			function enableLocation(map) {
+				if(navigator.geolocation){  
+				  navigator.geolocation.getCurrentPosition(zoomToLocation, locationError);
+				  watchId = navigator.geolocation.watchPosition(showLocation, locationError);
+				}
+				else{
+				  alert("Browser doesn't support Geolocation. Visit http://caniuse.com to discover browser support for the Geolocation API.");
+				}
+			  }
+
+			/**
+				locationError
+				If something goes wrong with generating a location, handle it
+			*/
+			function locationError(error) {
+				//error occurred so stop watchPosition
+				if(navigator.geolocation){
+				  navigator.geolocation.clearWatch(watchId);
+				}
+				switch (error.code) {
+				case error.PERMISSION_DENIED:
+				  //This is the case where a user has chosen not to share their location.
+				  //Removes the option to use location from the list.
+				  dojo.byId("myLocOpt").remove();
+				  break;
+
+				case error.POSITION_UNAVAILABLE:
+				  alert("Current location not available");
+				  break;
+
+				case error.TIMEOUT:
+				  alert("Timeout");
+				  break;
+
+				default:
+				  alert("unknown error");
+				  break;
+				}
+			}
+
+			/**
+				zoomToLocation
+				Zooms to the point location specified by the argument to the function.
+				Used to show the user's location on the map
+			*/
+			function zoomToLocation(location) {
+				var pt = esri.geometry.geographicToWebMercator(new esri.geometry.Point(location.coords.longitude, location.coords.latitude));
+				addGraphic(pt);    
+				if(useLocation){
+					map.centerAndZoom(pt, 16);
+				}
+			}
+
+			/**
+				showLocation
+				Centers and shows the supplied location on the map.
+				Used to update the user's location.
+			*/
+			function showLocation(location) {
+				//zoom to the users location and add a graphic
+				var pt = esri.geometry.geographicToWebMercator(new esri.geometry.Point(location.coords.longitude, location.coords.latitude));
+				if (!graphic) {
+				  addGraphic(pt);
+				}
+				else { //move the graphic if it already exists
+				  graphic.setGeometry(pt);
+				}
+				if(useLocation){
+					map.centerAt(pt);
+				}
+				currLocation = pt;
+			}
+		  
+			/**
+				addGraphic
+				Adds a point graphic to the map
+			*/
+			function addGraphic(pt){
+				//Symbol that will indicate the user's location
+				var symbol = new esri.symbol.SimpleMarkerSymbol(esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE, 12, 
+				  new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID,
+				  new dojo.Color([27, 30, 224, 0.9]), 2), 
+				  new dojo.Color([27, 224, 221, 0.9])
+				);
+				graphic = new esri.Graphic(pt, symbol);
+				map.graphics.add(graphic);
+			}
+
+			function updateBufferDist(){			
+				bufferGraphics.clear();
+				routeParams.polygonBarriers = new esri.tasks.FeatureSet();
+				//value = dojo.byId("fearSlider").value;
+				value = dojo.byId("fearSlider").getAttribute("aria-valuenow")
+				
+				dojo.forEach(nestBuffers[value].features,function(nestBuf,index){
+					routeParams.polygonBarriers.features.push(nestBuf);
+					bufferGraphics.add(nestBuf);
+				});
+				
+				
+				
+				if (value == 0){
+					dojo.byId("fearLevel").innerHTML = "I'm Not";
+				}
+				else if (value == 1){
+					dojo.byId("fearLevel").innerHTML = "I'm Cautious";
+				}
+				else if (value == 2){
+					dojo.byId("fearLevel").innerHTML = "I'm Terrified";
+				}
+			}
+		  
+		  dojo.ready(init);
+		</script>
+	</head>
+
+	<body class="claro">
+		<!-- The map -->
+		
+		<div id="mapDiv">
+			<button data-dojo-type="dojox.mobile.Button" value="New Route" onclick="show('setupRoute')" style="position:absolute; right:15px; top:15px; z-Index:1">New Route</button>
+			<button data-dojo-type="dojox.mobile.Button" onclick="show('infoDialog')" style="position:absolute; left:15px; bottom:15px; z-Index:1">Info</button>
+		</div>	
+		
+		<!-- Dialog to let the user set up their route -->
+		<div data-dojo-type="dojox.mobile.SimpleDialog" id="setupRoute" data-dojo-props='closeButton:true'>
+			<div class="mblSimpleDialogTitle">Goose Nest Avoider (Beta)</div>
+			<div class="mblSimpleDialogText">Find a goose-free route</div>
+			
+			<span class="mblSimpleDialogText">From:</span>
+			
+			<select id="buildingSelectorA" style="max-width:98%">		
+				<option id="myLocOpt" value="gps">My Location</option>
+				<option value="">--</option>
+			</select>
+			
+			<br />
+			<span class="mblSimpleDialogText">To:</span>
+			<select id="buildingSelectorB" style="max-width:98%">
+				<option value="">--</option>
+			</select>
+			<br />
+			<br />
+			
+			<div>How afraid of geese are you?</div>
+			<input id="fearSlider" data-dojo-type="dojox.mobile.Slider" name="fearSlider" type="range" style="width:90%;"  value="1" min="0" max="2" onchange="updateBufferDist()"></input>
+			<div id="fearLevel" style="font-size:12px">I'm Cautious</div>
+			<br />
+			
+			<div>
+				<button data-dojo-type="dojox.mobile.Button" style="width:100px" class="mblSimpleDialogButton" id="findRoute" value="Route" onclick="generateRoute()">Go</button>
+			</div>
+			<br />
+			<span class="mblSimpleDialogText" style="font-size:12px">Keep track of other <a href="http://uwaterloo.ca/mad/maps" style="color:white">MAD Maps</a> we're building.</span>
+		</div>	
+	
+		<!-- Dialog to show the user some credits and info about the applicaiton -->
+		<div data-dojo-type="dojox.mobile.SimpleDialog" id="infoDialog" data-dojo-props='closeButton:true'>
+			<div class="mblSimpleDialogTitle">Goose Nest Avoider Information</div>
+			<div class="mblSimpleDialogText">Building and Goose Nest locations courtesy uWaterloo Open Data API. Pathways courtesy MappedIn and Esri Canada.</div>
+			<div class="mblSimpleDialogText">Developed by <a href="http://uwaterloo.ca/mad" style="color:white">MAD</a></div>
+			<div class="mblSimpleDialogText" style="font-size:12px">Questions/Comments/Bugs?<br />Email: jmccarth@uwaterloo.ca <br />Twitter: @JD_McCarthy</div>
+		</div>
+		
+		<!-- Loading dialog while solving route -->
+		<div data-dojo-type="dojox.mobile.SimpleDialog" id="loadingDialog">
+			<div data-dojo-type="dojox.mobile.ProgressIndicator" startSpinning="true" size="30"></div>
+			<br />
+			<div class="mblSimpleDialogText">Solving Route</div>
+		</div>
+		
+		
+	</body>
+</html>
