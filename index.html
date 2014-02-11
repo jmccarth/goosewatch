@@ -84,37 +84,64 @@
   </script>
   </head>
   <body>
-    <div class="navbar navbar-inverse">
+    <nav class="navbar navbar-inverse" role="navigation">
 		<div class="container-fluid">
 			<div class="navbar-header">
+				
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
 				<a class="navbar-brand" href="#">GooseWatch14</a>
 			</div>
+			 <!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li><a href="#" data-toggle="modal" data-target="#myModal">Report a Goose Nest</a></li>
+				</ul>
+			</div>
 		</div>
-	</div>
+	</nav>
 	
 	<!-- Modal form for adding a location -->
-	<!-- Button trigger modal -->
-<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-  Add Nest Location
-</button>
+	<div class="modal fade" id="addLocationModal" tabindex="-1" role="dialog" aria-labelledby="addLocLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h4 class="modal-title" id="addLocLabel">Report a Nest Location</h4>
+		  </div>
+		  <div class="modal-body">
+			<label>Location
+				<input id="coords" type="text" placeholder="Current Location" />
+			</label>
+			<button type="button" class="btn btn-default" onClick="locateUser()"><span class="glyphicon glyphicon-map-marker"></span></a>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			<button type="button" class="btn btn-primary" onclick="saveFeature()">Save changes</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
 
-<!-- Modal -->
+
+<!-- Modal for start screen -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Report a Goose Nest</h4>
+        <h4 class="modal-title" id="myModalLabel">Do Stuff</h4>
       </div>
       <div class="modal-body">
-        <label>Location
-			<input id="coords" type="text" placeholder="Current Location" />
-		</label>
-		<button type="button" class="btn btn-default" onClick="locateUser()">Use current location</a>
+		<button type="button" class="btn btn-default" data-toggle="modal" data-target="#addLocationModal" data-dismiss="modal">Report a Nest</button>
+		<button type="button" class="btn btn-default">Navigate</button>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onclick="saveFeature()">Save changes</button>
       </div>
     </div>
   </div>
