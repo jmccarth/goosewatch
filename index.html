@@ -39,11 +39,15 @@
 	var gooseNestsURL = "http://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/GooseWatch14/FeatureServer/0";
 	var gooseFL;
 	var x, y;
+	var offCampusBuildings = ["AAC","AAR","ARC","GA","HSC","IHB","IQC","PHR","WSS","UAE"];
+	var buildings;
 	
-    require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer){
+    require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet){
 		$('#goToNavigate').click(function(){
 			$('.slider').slider();
 		});
+		
+		buildings = new FeatureSet();
 		
 	  map = new Map("mapDiv",{
 		basemap: "topo",
@@ -58,6 +62,11 @@
 		  });
 		  
 		  map.addLayer(gooseFL);
+		  
+			// Get building data
+			dojo.io.script.get({
+			url: "http://api.uwaterloo.ca/public/v1/?key=cb63602dd1fd2a14332405f8613b68ed&service=Buildings&output=json&callback=populateBuildings&jsonp=?"
+			});
 		}
 	  	map.on("load", initLayers);	  
     });
@@ -92,6 +101,28 @@
 		//coords.value = loc
 		//Store in variable
 		//Lock down text box
+	}
+	
+	/**
+		populateBuildings
+		Goes through the JSON response of building points, builds the 2 pick lists,
+		and the featureset object to hold all buildings not in the offCampusBuildings list
+	*/
+	function populateBuildings(data){
+		dojo.forEach(data.response.data.result,function(value,index){
+			bldg = value.Acronym;
+			if (offCampusBuildings.indexOf(bldg) == -1){
+				bldgDesc = value.Acronym + " (" + value.Name + ")";
+				dojo.byId("buildingSelectorA").options.add(new Option(bldgDesc,bldg));
+				dojo.byId("buildingSelectorB").options.add(new Option(bldgDesc,bldg));
+				
+				var pt = new esri.geometry.Point(value.Longitude,value.Latitude);
+				var sym = new esri.symbol.SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_SQUARE).setColor(new dojo.Color([255,0,0,0.5]));
+				var attr = {"Acronym":value.Acronym,"Name":value.Name};
+				var b = new esri.Graphic(pt,sym,attr);
+				buildings.features.push(b);
+			}
+		});
 	}
   </script>
   </head>
