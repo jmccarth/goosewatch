@@ -41,8 +41,11 @@
 	var x, y;
 	var offCampusBuildings = ["AAC","AAR","ARC","GA","HSC","IHB","IQC","PHR","WSS","UAE"];
 	var buildings;
+	var results;
+	var stopSymbol, routeSymbol;
+	var routeParams, routeTask;
 	
-    require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet){
+    require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters){
 		$('#goToNavigate').click(function(){
 			$('.slider').slider();
 		});
@@ -60,9 +63,29 @@
 			mode: FeatureLayer.MODE_ONDEMAND,
 			outFields: ["*"]
 		  });
+		  results = new GraphicsLayer();
 		  
-		  map.addLayer(gooseFL);
+		
+		  map.addLayers([gooseFL,results]);
+			//Set up routing parameters
+			routeTask = new RouteTask("http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Campus/uw_route/NAServer/Route?token=oxSF0Agd5ZoDEqJX3b0hcn4im9yhLs-yeQbAgxTn7gfD20WSqbk9qYBpaZMqVwBb86GV79qfaAu_3zsawq3tpzBefVkbcK81hghgCggBWEI.");
+			routeParams = new RouteParameters();
+			routeParams.stops = new FeatureSet();
+			routeParams.polygonBarriers = new FeatureSet();
+			routeParams.returnPolygonBarriers = true;
+			routeParams.outSpatialReference = {"wkid":102100};
+			routeParams.doNotLocateOnRestrictedElements = true;
+			
+			dojo.connect(routeTask, "onSolveComplete", showRoute);
+			//dojo.connect(routeTask, "onError", errorHandler);
 		  
+			//Set up routing symbology
+			stopSymbol = new SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_X).setSize(15);
+			stopSymbol.outline.setWidth(3);
+			routeSymbol = new SimpleLineSymbol().setColor(new dojo.Color([0,0,255,0.5])).setWidth(4);
+			
+		    
+			
 			// Get building data
 			dojo.io.script.get({
 			url: "https://api.uwaterloo.ca/v2/buildings/list.json?key=***REMOVED***&output=json&callback=populateBuildings&jsonp=?"
@@ -101,6 +124,122 @@
 		//coords.value = loc
 		//Store in variable
 		//Lock down text box
+	}
+	
+	function generateRoute(){
+		//What are the start and end buildings?
+		var buildingA = dojo.byId("buildingSelectorA").value;
+		var buildingB = dojo.byId("buildingSelectorB").value;
+		
+		//if this stays true, find a route
+		var findRoute = true;
+		
+		//User has not specified a building
+		if (buildingA == ""){
+			alert("Please select a valid start location");
+			hide('loadingDialog');
+			show('setupRoute');
+			findRoute = false;
+		}
+		if (buildingB == ""){
+			alert("Please select a valid end location");
+			hide('loadingDialog');
+			show('setupRoute');
+			findRoute = false;
+		}
+		
+		//Make sure buildings aren't the same
+		if (buildingA == buildingB && buildingA != ""){
+			alert("Your start and end location must be different");
+			hide('loadingDialog');
+			show('setupRoute');
+			findRoute = false;
+		}
+		
+		//All is OK above, so find the route
+		if (findRoute){
+		/*
+			if (useLocation == true){
+				//if using 1 building and device location
+				dojo.forEach(buildings.features, function(value,index){
+					if (value.attributes.Acronym == buildingB){
+						//Once the building is found add it as a stop
+						addStop(value);
+						//Make a graphic out of the user's most recent location and add it as a stop
+						var g = new esri.Graphic(esri.geometry.webMercatorToGeographic(currLocation))
+						addStop(g);
+					}
+				});
+			}
+		*/	
+			//else if (useLocation == false){ //will use when we support GPS
+			
+				// if using 2 buildings
+				dojo.forEach(buildings.features, function(value,index){
+					if (value.attributes.Acronym == buildingA || value.attributes.Acronym == buildingB){
+						//When a buliding is found add it as a stop
+						addStop(value);
+					}
+				});
+			//}
+		}
+	}
+	
+	/**
+		showRoute
+		Called when the route is successfully solved. Displays resulting route on map
+		and sets the map's extent to show the entire route.
+	*/
+	function showRoute(solveResult){
+		results.add(solveResult.routeResults[0].route.setSymbol(routeSymbol));
+		map.setExtent(solveResult.routeResults[0].route.geometry.getExtent(),true);
+	}
+	
+	/**
+		errorHandler
+		Called when something goes wrong with the route.
+	*/
+	function errorHandler(err){
+		//TODO: Check if this works
+		if(useLocation){				
+			var bldgB = dojo.byId("buildingSelectorB").value;
+			alert("A route could not be found between (" + currLocation.x + ", " + currLocation.y + ") and " + bldgB);
+		}
+		else{
+			var bldgA = dojo.byId("buildingSelectorA").value;
+			var bldgB = dojo.byId("buildingSelectorB").value;
+			alert("A route could not be found between " + bldgA + " and " + bldgB);
+		}
+			
+		routeParams.stops = new esri.tasks.FeatureSet();
+		map.graphics.clear();
+		resetRouting();
+	}
+	
+	/**
+		addStop
+		Takes a graphic and adds it as a stop to the routing problem. When there are two stops added,
+		launch the routing task.
+	*/
+	function addStop(stop){
+		var barriersToRemove = [];
+		s = results.add(new esri.Graphic(esri.geometry.geographicToWebMercator(stop.geometry),stopSymbol));
+		routeParams.stops.features.push(s);
+		if (routeParams.stops.features.length >= 2){
+			//Loop through polygon barriers and check if they contain the start or end point. If so, remove them.
+			dojo.forEach(routeParams.polygonBarriers.features,function(barrier,index){
+				if(barrier.geometry.contains(routeParams.stops.features[0].geometry) || barrier.geometry.contains(routeParams.stops.features[1].geometry)){
+					barriersToRemove.push(index);
+				}
+			});
+			dojo.forEach(barriersToRemove.reverse(),function(bIndex){ //Must reverse list of features to remove to avoid screwing up indices
+				routeParams.polygonBarriers.features.splice(bIndex,1);
+			});
+			if(barriersToRemove.length > 0){
+				alert("Note, your start or end point is close to a goose nest. Proceed with caution.");
+			}
+			routeTask.solve(routeParams);
+		}
 	}
 	
 	/**
@@ -198,7 +337,7 @@
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			<button type="button" class="btn btn-primary" onclick="findRoute()">Find Route</button>
+			<button type="button" class="btn btn-primary" onclick="generateRoute()">Find Route</button>
 		  </div>
 		</div>
 	  </div>
