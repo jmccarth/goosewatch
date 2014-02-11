@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+  <title>Create a Web Map</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<script src="js/jquery-2.1.0.min.js"></script>-->
+      <link rel="stylesheet" href="css/foundation.css" />
+      <script src="js/vendor/modernizr.js"></script>
+
+      
+  <link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.8/js/esri/css/esri.css">
+  <style>
+    html,body,#mapDiv,.map.container{
+      padding:0;
+      margin:0;
+      height:100%;
+    }
+  </style>
+
+  <!--<script>var dojoConfig = { parseOnLoad:true };</script>-->
+  <script src="http://js.arcgis.com/3.8compact/"></script>
+  <script>
+    var map;
+    require(["esri/map", "esri/arcgis/utils","dojo/domReady!"], function(Map,arcgisUtils){
+      arcgisUtils.createMap("48aa28cfd8c34a1b952392abde494d31","mapDiv").then(function(response){
+        map = response.map;
+      })
+    });
+	
+	function locateUser(){
+		if(navigator.geolocation){  
+		  navigator.geolocation.getCurrentPosition(populateLocation);
+		  watchId = navigator.geolocation.watchPosition(populateLocation);
+		}
+		else{
+		  alert("Browser doesn't support Geolocation. Visit http://caniuse.com to discover browser support for the Geolocation API.");
+		}
+	  }
+
+	
+	function populateLocation(location){
+		//Put coordinates in text box
+		var $coords = $("#coords")
+		$coords.value = location.coords.longitude + "," + location.coords.latitude;
+		//Store in variable
+		//Lock down text box
+	}
+  </script>
+  </head>
+
+  <body>
+      <!-- HEADER -->
+      <nav class="top-bar" data-topbar>
+          <ul class="title-area">
+            <li class="name">
+                <h1><a href="#">GooseWatch14</a></h1>  
+            </li>
+          </ul>
+          <section class="top-bar-section">
+            <ul class="right">
+                <li class="active"><a href="#" data-reveal-id="addNest">Add Nest Location</a></li>
+            </ul>
+          </section>
+      </nav>
+      
+      <!-- Add location modal -->
+	<div id="addNest" class="reveal-modal" data-reveal>
+		<h2>Add a Nest Location</h2>
+		<form>
+			<div class="row">
+				<div class="large-12 columns">
+					<label>Location
+						<input id="coords" type="text" placeholder="Current Location" />
+					</label>
+					<a href="#" class="button small" onClick="locateUser();">Use current location</a>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="large-12 columns">
+					<label>Name (optional)
+						<input type="text" placeholder="J. Doe" />
+					</label>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="large-12 columns">
+					<label>Location Description
+						<input type="text" placeholder="The place where I am" />
+					</label>
+				</div>
+			</div>
+			
+			<a href="#" class="button alert">Submit</a>
+			
+		</form>
+	</div>
+      
+      
+      
+      
+      
+    <div id="mapDiv"></div>
+      <script src="js/vendor/jquery.js"></script>
+      <script src="js/vendor/fastclick.js"></script>
+      <script src="js/foundation.min.js"></script>
+      <script>
+          $(document).foundation();
+      </script>
+  </body>
+  </html>

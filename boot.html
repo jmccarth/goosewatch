@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GooseWatch 2014</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.8/js/esri/css/esri.css">
+	<style>
+	html,body,#mapDiv,.map.container{
+	  padding:0;
+	  margin:0;
+	  height:100%;
+	}
+	</style>
+
+  <!--<script>var dojoConfig = { parseOnLoad:true };</script>-->
+  <script src="http://js.arcgis.com/3.8compact/"></script>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	<script>
+    var map;
+	var gooseNestsURL = "http://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/GooseWatch14/FeatureServer/0";
+	var gooseFL;
+	var x, y;
+	
+    require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer){
+	  map = new Map("mapDiv",{
+		basemap: "topo",
+		center: [-80.542, 43.471],
+		zoom: 14
+	  });
+	  
+	  	function initLayers(){
+		  gooseFL = new FeatureLayer(gooseNestsURL,{
+			mode: FeatureLayer.MODE_ONDEMAND,
+			outFields: ["*"]
+		  });
+		  
+		  map.addLayer(gooseFL);
+		}
+	  	map.on("load", initLayers);	  
+    });
+	
+	function saveFeature(){
+	require(["esri/graphic","esri/geometry/Point","esri/geometry/webMercatorUtils","esri/SpatialReference","esri/layers/FeatureLayer"],function(Graphic,Point,webMercatorUtils,SpatialReference,FeatureLayer){
+		
+		var p = webMercatorUtils.geographicToWebMercator(new Point(x,y,new SpatialReference({wkid:4326})));
+		var g = new Graphic(p,null,{"LocDescrip":"somewhere","Submitter":"James","TwitterSub":"JD_McCarthy"});;
+		gooseFL.applyEdits([g],null,null);
+	});
+	}
+	
+	function locateUser(){
+		if(navigator.geolocation){  
+		  navigator.geolocation.getCurrentPosition(populateLocation);
+		  watchId = navigator.geolocation.watchPosition(populateLocation);
+		}
+		else{
+		  alert("Browser doesn't support Geolocation. Visit http://caniuse.com to discover browser support for the Geolocation API.");
+		}
+	  }
+
+	
+	function populateLocation(location){
+		//Put coordinates in text box
+		var coords = $("#coords");
+		x = location.coords.longitude;
+		y = location.coords.latitude;
+		loc = x + "," + y;
+		coords.val(loc);
+		//coords.value = loc
+		//Store in variable
+		//Lock down text box
+	}
+  </script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">GooseWatch14</a>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Modal form for adding a location -->
+	<!-- Button trigger modal -->
+<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+  Add Nest Location
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Report a Goose Nest</h4>
+      </div>
+      <div class="modal-body">
+        <label>Location
+			<input id="coords" type="text" placeholder="Current Location" />
+		</label>
+		<button type="button" class="btn btn-default" onClick="locateUser()">Use current location</a>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="saveFeature()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+	
+   <div id="mapDiv"></div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
