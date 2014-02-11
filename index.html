@@ -9,12 +9,18 @@
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+	<!-- Slider -->
+	<link href="css/slider.css" rel="stylesheet">
+	<!-- Esri CSS -->
 	<link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.8/js/esri/css/esri.css">
 	<style>
 	html,body,#mapDiv,.map.container{
 	  padding:0;
 	  margin:0;
 	  height:100%;
+	}
+	.slider{
+		width: 300px;
 	}
 	</style>
 
@@ -27,12 +33,18 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 	<script>
+	
+	
     var map;
 	var gooseNestsURL = "http://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/GooseWatch14/FeatureServer/0";
 	var gooseFL;
 	var x, y;
 	
     require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer){
+		$('#goToNavigate').click(function(){
+			$('.slider').slider();
+		});
+		
 	  map = new Map("mapDiv",{
 		basemap: "topo",
 		center: [-80.542, 43.471],
@@ -127,6 +139,39 @@
 	  </div>
 	</div>
 
+	<!-- Modal form for finding a route -->
+	<div class="modal fade" id="findRouteModal" tabindex="-1" role="dialog" aria-labelledby="findRouteLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h4 class="modal-title" id="findRouteLabel">Goosewatch 2014 - Find a Route</h4>
+		  </div>
+		  <div class="modal-body">
+			From:
+			<select id="buildingSelectorA">		
+				<!--<option id="myLocOpt" value="gps">My Location</option>-->
+				<option value="">--</option>
+			</select>
+			<br />
+			To:
+			<select id="buildingSelectorB">
+				<option value="">--</option>
+			</select>
+			<br />
+				How afraid of geese are you?
+			<p>
+				<input type="text" class="slider" style="" data-slider-min="0" data-slider-max="2" data-slider-step="1" data-slider-value="1" data-slider-tooltip="hide" />
+			</p>
+			<!--<button type="button" class="btn btn-default" onClick="locateUser()"><span class="glyphicon glyphicon-map-marker"></span></a>-->
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			<button type="button" class="btn btn-primary" onclick="findRoute()">Find Route</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
 
 <!-- Modal for start screen -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -138,7 +183,7 @@
       </div>
       <div class="modal-body">
 		<button type="button" class="btn btn-default" data-toggle="modal" data-target="#addLocationModal" data-dismiss="modal">Report a Nest</button>
-		<button type="button" class="btn btn-default">Navigate</button>
+		<button id="goToNavigate" type="button" class="btn btn-default" data-toggle="modal" data-target="#findRouteModal" data-dismiss="modal">Navigate</button>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -146,11 +191,15 @@
     </div>
   </div>
 </div>
-	
+
    <div id="mapDiv"></div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
+	<!-- modernizr -->
+	<script src="js/modernizr-dev.js"></script>
+	<!-- Slider JS -->
+	<script src="js/bootstrap-slider.js"></script>
   </body>
 </html>
