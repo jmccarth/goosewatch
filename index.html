@@ -44,29 +44,41 @@
 	var results;
 	var stopSymbol, routeSymbol;
 	var routeParams, routeTask;
+	var bufferGraphics;
+	var bufferParams;
+	var gsvc;
+	var nestBuffers = [];
 	
-    require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters){
-		$('#goToNavigate').click(function(){
-			$('.slider').slider();
-		});
+    require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query){
+		
+		gsvc = new GeometryService("http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+		$('.slider').slider();
 		
 		buildings = new FeatureSet();
+		nestBuffers.push(new esri.tasks.FeatureSet());
+		nestBuffers.push(new esri.tasks.FeatureSet());
+		nestBuffers.push(new esri.tasks.FeatureSet());
 		
 	  map = new Map("mapDiv",{
 		basemap: "topo",
 		center: [-80.542, 43.471],
-		zoom: 14
+		zoom: 16
 	  });
+
 	  
-	  	function initLayers(){
+	  	
+		function initLayers(){
 		  gooseFL = new FeatureLayer(gooseNestsURL,{
-			mode: FeatureLayer.MODE_ONDEMAND,
+			mode: FeatureLayer.MODE_SELECTION,
 			outFields: ["*"]
 		  });
+		  gooseFL.on("selection-complete",makeNestBuffers);
+		  map.addLayer(gooseFL);
 		  results = new GraphicsLayer();
+		  bufferGraphics = new GraphicsLayer();
+			
+			
 		  
-		
-		  map.addLayers([gooseFL,results]);
 			//Set up routing parameters
 			routeTask = new RouteTask("http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Campus/uw_route/NAServer/Route?token=oxSF0Agd5ZoDEqJX3b0hcn4im9yhLs-yeQbAgxTn7gfD20WSqbk9qYBpaZMqVwBb86GV79qfaAu_3zsawq3tpzBefVkbcK81hghgCggBWEI.");
 			routeParams = new RouteParameters();
@@ -83,24 +95,80 @@
 			stopSymbol = new SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_X).setSize(15);
 			stopSymbol.outline.setWidth(3);
 			routeSymbol = new SimpleLineSymbol().setColor(new dojo.Color([0,0,255,0.5])).setWidth(4);
-			
-		    
+
 			
 			// Get building data
 			dojo.io.script.get({
 			url: "https://api.uwaterloo.ca/v2/buildings/list.json?key=***REMOVED***&output=json&callback=populateBuildings&jsonp=?"
 			});
+			
+			map.addLayer(results);
+			map.addLayer(bufferGraphics);
+			
+			var selectAll = new Query;
+			selectAll.where = "1=1";
+			gooseFL.selectFeatures(selectAll,FeatureLayer.SELECTION_NEW);			
 		}
 	  	map.on("load", initLayers);	  
+		
     });
 	
-	function saveFeature(){
-	require(["esri/graphic","esri/geometry/Point","esri/geometry/webMercatorUtils","esri/SpatialReference","esri/layers/FeatureLayer"],function(Graphic,Point,webMercatorUtils,SpatialReference,FeatureLayer){
+	function makeNestBuffers(){
+		require(["esri/symbols/SimpleFillSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/GeometryService","esri/SpatialReference","esri/tasks/BufferParameters","esri/graphic","esri/InfoTemplate"],function(SimpleFillSymbol,SimpleLineSymbol,GeometryService,SpatialReference,BufferParameters,Graphic,InfoTemplate){
+			//Set up nest symbol
+			var sfs = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+							new dojo.Color([255, 255, 255]), 1),new dojo.Color([210, 105, 30, 0.9]));
+			
+			//for each nest location
+			dojo.forEach(gooseFL.graphics, function(nest,index){
+			
+				//Create graphic and add to map
+				//var infoTemplate = new esri.InfoTemplate("Goose Nest", desc);
+				var pt = nest.geometry;
+				//graphic = new esri.Graphic(pt, symbol);
+				//graphic.setInfoTemplate(infoTemplate);
+				//map.graphics.add(graphic)
+				//gooseFeatures.features.push(graphic);
+			
+				//Build buffers
+				//Set up buffer parameters
+				bufferParams = new BufferParameters();
+				bufferParams.distances = [ 12, 20, 30 ];
+				bufferParams.unit = GeometryService.UNIT_METER;
+				bufferParams.bufferSpatialReference = new SpatialReference({wkid: 102100});
+				bufferParams.outSpatialReference = map.spatialReference;			
+				bufferParams.geometries  = [ pt ];
+				
+				var buildInfoTemplate = function(nestDesc){
+					return function(bufResults){
+						var bufGraphic = new Graphic(bufResults[$("#fearSlider").data('slider').getValue()],sfs);
+						routeParams.polygonBarriers.features.push(bufGraphic);	
+						var bufInfoTemplate = new InfoTemplate("Goose Nest", nestDesc);
+						//nestBuffers.features.push(bufGraphic);
+						bufferGraphics.add(bufGraphic);
+						nestBuffers[0].features.push(new Graphic(bufResults[0],sfs).setInfoTemplate(bufInfoTemplate));
+						nestBuffers[1].features.push(new Graphic(bufResults[1],sfs).setInfoTemplate(bufInfoTemplate));
+						nestBuffers[2].features.push(new Graphic(bufResults[2],sfs).setInfoTemplate(bufInfoTemplate));
+					};
+				};
+				
+				//Buffer the features and add the results as barriers to the routing task
+				gsvc.buffer(bufferParams,buildInfoTemplate(""));
+			});
+		});
 		
-		var p = webMercatorUtils.geographicToWebMercator(new Point(x,y,new SpatialReference({wkid:4326})));
-		var g = new Graphic(p,null,{"LocDescrip":"somewhere","Submitter":"James","TwitterSub":"JD_McCarthy"});;
-		gooseFL.applyEdits([g],null,null);
-	});
+		//generateRoute();
+	}
+	
+	
+	
+	function saveFeature(){
+		require(["esri/graphic","esri/geometry/Point","esri/geometry/webMercatorUtils","esri/SpatialReference","esri/layers/FeatureLayer"],function(Graphic,Point,webMercatorUtils,SpatialReference,FeatureLayer){
+		
+			var p = webMercatorUtils.geographicToWebMercator(new Point(x,y,new SpatialReference({wkid:4326})));
+			var g = new Graphic(p,null,{"LocDescrip":"somewhere","Submitter":"James","TwitterSub":"JD_McCarthy"});;
+			gooseFL.applyEdits([g],null,null);
+		});
 	}
 	
 	function locateUser(){
@@ -127,6 +195,7 @@
 	}
 	
 	function generateRoute(){
+		//makeNestBuffers();
 		//What are the start and end buildings?
 		var buildingA = dojo.byId("buildingSelectorA").value;
 		var buildingB = dojo.byId("buildingSelectorB").value;
@@ -177,7 +246,7 @@
 				// if using 2 buildings
 				dojo.forEach(buildings.features, function(value,index){
 					if (value.attributes.Acronym == buildingA || value.attributes.Acronym == buildingB){
-						//When a buliding is found add it as a stop
+						//When a building is found add it as a stop
 						addStop(value);
 					}
 				});
@@ -193,6 +262,30 @@
 	function showRoute(solveResult){
 		results.add(solveResult.routeResults[0].route.setSymbol(routeSymbol));
 		map.setExtent(solveResult.routeResults[0].route.geometry.getExtent(),true);
+	}
+	
+	function updateBufferDist(){			
+		bufferGraphics.clear();
+		routeParams.polygonBarriers = new esri.tasks.FeatureSet();
+		//value = dojo.byId("fearSlider").value;
+		//value = dojo.byId("fearSlider").getAttribute("aria-valuenow")
+		value = 0
+		dojo.forEach(nestBuffers[value].features,function(nestBuf,index){
+			routeParams.polygonBarriers.features.push(nestBuf);
+			bufferGraphics.add(nestBuf);
+		});
+		
+		
+		
+		if (value == 0){
+			dojo.byId("fearLevelLabel").innerHTML = "I'm Not";
+		}
+		else if (value == 1){
+			dojo.byId("fearLevelLabel").innerHTML = "I'm Cautious";
+		}
+		else if (value == 2){
+			dojo.byId("fearLevelLabel").innerHTML = "I'm Terrified";
+		}
 	}
 	
 	/**
@@ -241,6 +334,7 @@
 			routeTask.solve(routeParams);
 		}
 	}
+	
 	
 	/**
 		populateBuildings
@@ -331,7 +425,8 @@
 			<br />
 				How afraid of geese are you?
 			<p>
-				<input type="text" class="slider" style="" data-slider-min="0" data-slider-max="2" data-slider-step="1" data-slider-value="1" data-slider-tooltip="hide" />
+				<input id="fearSlider" type="text" class="slider" style="" data-slider-min="0" data-slider-max="2" data-slider-step="1" data-slider-value="1" data-slider-tooltip="hide" />
+				<div id="fearSliderLabel"></div>
 			</p>
 			<!--<button type="button" class="btn btn-default" onClick="locateUser()"><span class="glyphicon glyphicon-map-marker"></span></a>-->
 		  </div>
