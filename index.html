@@ -9,6 +9,8 @@
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+	<!-- FontAwesome -->
+	<link rel="stylesheet" href="font-awesome-4.0.3/css/font-awesome.min.css">
 	<!-- Slider -->
 	<link href="css/slider.css" rel="stylesheet">
 	<!-- Esri CSS -->
@@ -184,6 +186,7 @@
 		  watchId = navigator.geolocation.watchPosition(populateLocation);
 		}
 		else{
+			$("#locationLink")[0].style.color = "red";
 		  alert("Browser doesn't support Geolocation. Visit http://caniuse.com to discover browser support for the Geolocation API.");
 		}
 	  }
@@ -196,9 +199,11 @@
 		y = location.coords.latitude;
 		loc = x + "," + y;
 		coords.val(loc);
-		//coords.value = loc
-		//Store in variable
-		//Lock down text box
+		
+		
+		//Lock down text box and change colour of map icon
+		$("#coords")[0].disabled = true;
+		$("#locationLink")[0].style.color = "green";
 	}
 	
 	function generateRoute(){
@@ -420,30 +425,30 @@
 		  <div class="modal-body">
 			<form class="form-horizontal">
 				<div class="form-group">
-					<label for="locDesc" class="control-label col-xs-4">Description of Location</label>
-					<div class="col-xs-8">
-						<input id="locDesc" type="text" placeholder="Ex: In between HH and AL" />
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-comment"></i></span>
+						<input id="locDesc" type="text" placeholder="Location description" class="form-control"/>
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="coords" class="control-label col-xs-4">Current Location</label>
-					<div class="col-xs-8">
-						<input id="coords" type="text" placeholder="Tap the button to the right to submit your current location" />
-						<button type="button" class="btn btn-default" onClick="locateUser()"><span class="glyphicon glyphicon-map-marker"></span></button>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<label for="submitter" class="control-label col-xs-4">Your Name</label>
-					<div class="col-xs-8">
-						<input id="submitter" type="text" placeholder="" />
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-compass"></i></span>
+						<input id="coords" type="text" placeholder="Tap button to the right to supply your location (optional)" class="form-control"/>
+						<span class="input-group-addon"><a id="locationLink" href="#" onclick="locateUser()" style="color:black"><i class="fa fa-map-marker"></i></a></span>
 					</div>
 				</div>
 				
 				<div class="form-group">
-					<label for="twitterHandle" class="control-label col-xs-4">Twitter Handle</label>
-					<div class="col-xs-8">
-						<input id="twitterHandle" type="text" placeholder="" />
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-user"></i></span>
+						<input id="submitter" type="text" placeholder="Name (optional)" class="form-control"/>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-twitter"></i></span>
+						<input id="twitterHandle" type="text" placeholder="Twitter handle (optional)" class="form-control"/>
 					</div>
 				</div>			
 			</form>
@@ -465,7 +470,9 @@
 			<h4 class="modal-title" id="findRouteLabel">Thanks for your submission to Goosewatch 2014!</h4>
 		  </div>
 		  <div class="modal-body">
+			<p>
 			Your submitted location will be reviewed before being placed on the map. Use the button below if you want to share your submission on Twitter.
+			</p>
 			<a href="https://twitter.com/intent/tweet?button_hashtag=goosewatch2014&text=I%20just%20submitted%20a%20goose%20nest%20location" class="twitter-hashtag-button" data-size="large">Tweet #goosewatch2014</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>	
 		  </div>
