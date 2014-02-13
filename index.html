@@ -54,7 +54,7 @@
     require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query){
 		
 		gsvc = new GeometryService("http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer");
-		$('.slider').slider();
+		
 		$(window).load(function(){
 			$('#startScreenModal').modal('show');
 		});
@@ -145,7 +145,7 @@
 				
 				var buildInfoTemplate = function(nestDesc){
 					return function(bufResults){
-						var bufGraphic = new Graphic(bufResults[$("#fearSlider").data('slider').getValue()],sfs);
+						var bufGraphic = new Graphic(bufResults[$("#fearSelector").val()],sfs);
 						routeParams.polygonBarriers.features.push(bufGraphic);	
 						var bufInfoTemplate = new InfoTemplate("Goose Nest", nestDesc);
 						//nestBuffers.features.push(bufGraphic);
@@ -354,6 +354,7 @@
 		and the featureset object to hold all buildings not in the offCampusBuildings list
 	*/
 	function populateBuildings(data){
+		
 		dojo.forEach(data.data,function(value,index){
 			bldg = value.building_code;
 			if (offCampusBuildings.indexOf(bldg) == -1){
@@ -368,7 +369,27 @@
 				buildings.features.push(b);
 			}
 		});
+		sortSelect(document.getElementById('buildingSelectorA'));
+		sortSelect(document.getElementById('buildingSelectorB'));
 	}
+	
+	function sortSelect(selElem) {
+        var tmpAry = new Array();
+        for (var i=0;i<selElem.options.length;i++) {
+            tmpAry[i] = new Array();
+            tmpAry[i][0] = selElem.options[i].text;
+            tmpAry[i][1] = selElem.options[i].value;
+        }
+        tmpAry.sort();
+        while (selElem.options.length > 0) {
+            selElem.options[0] = null;
+        }
+        for (var i=0;i<tmpAry.length;i++) {
+            var op = new Option(tmpAry[i][0], tmpAry[i][1]);
+            selElem.options[i] = op;
+        }
+        return;
+    }
   </script>
   </head>
   <body>
@@ -403,9 +424,14 @@
 			<h4 class="modal-title" id="startScreenModalLabel">GooseWatch14</h4>
 		  </div>
 		  <div class="modal-body">
-			What would you like to do?
-			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#addLocationModal" data-dismiss="modal">Report a Nest</button>
-			<button id="goToNavigate" type="button" class="btn btn-default" data-toggle="modal" data-target="#findRouteModal" data-dismiss="modal">Navigate</button>
+				<p class="text-center">What would you like to do?</p>
+				<div class="btn-group-wrap" style="text-align: center;">
+					<div class="btn-group-vertical">
+						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#addLocationModal" data-dismiss="modal">Report a Nest</button>
+						<button id="goToNavigate" type="button" class="btn btn-default" data-toggle="modal" data-target="#findRouteModal" data-dismiss="modal">Navigate</button>
+					</div>
+				</div>
+			
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -492,22 +518,31 @@
 			<h4 class="modal-title" id="findRouteLabel">Goosewatch 2014 - Find a Route</h4>
 		  </div>
 		  <div class="modal-body">
-			From:
-			<select id="buildingSelectorA">		
-				<!--<option id="myLocOpt" value="gps">My Location</option>-->
-				<option value="">--</option>
-			</select>
-			<br />
-			To:
-			<select id="buildingSelectorB">
-				<option value="">--</option>
-			</select>
-			<br />
-				How afraid of geese are you?
-			<p>
-				<input id="fearSlider" type="text" class="slider" style="" data-slider-min="0" data-slider-max="2" data-slider-step="1" data-slider-value="1" data-slider-tooltip="hide" />
-				<div id="fearSliderLabel"></div>
-			</p>
+			<form class="form-horizontal">
+				<div class="input-group">
+					<span class="input-group-addon">From:</span>
+					<select id="buildingSelectorA" class="form-control">		
+						<!--<option id="myLocOpt" value="gps">My Location</option>-->
+						<option value="">--</option>
+					</select>
+				</div>
+				<div class="input-group">
+					<span class="input-group-addon">To:</span>
+					<select id="buildingSelectorB" class="form-control">
+						<option value="">--</option>
+					</select>
+				</div>
+				<div class="input-group">
+					<span class="input-group-addon">Fear of Geese</span>
+					<select id="fearSelector" class="form-control">
+						<option value="0">None</option>
+						<option value="1">Cautious</option>
+						<option value="2">Terrified</option>
+					</select>
+				</div>
+				
+				
+			</form>
 			<!--<button type="button" class="btn btn-default" onClick="locateUser()"><span class="glyphicon glyphicon-map-marker"></span></a>-->
 		  </div>
 		  <div class="modal-footer">
