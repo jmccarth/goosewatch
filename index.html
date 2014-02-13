@@ -53,7 +53,9 @@
 		
 		gsvc = new GeometryService("http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer");
 		$('.slider').slider();
-		
+		$(window).load(function(){
+			$('#startScreenModal').modal('show');
+		});
 		buildings = new FeatureSet();
 		nestBuffers.push(new esri.tasks.FeatureSet());
 		nestBuffers.push(new esri.tasks.FeatureSet());
@@ -165,8 +167,13 @@
 	function saveFeature(){
 		require(["esri/graphic","esri/geometry/Point","esri/geometry/webMercatorUtils","esri/SpatialReference","esri/layers/FeatureLayer"],function(Graphic,Point,webMercatorUtils,SpatialReference,FeatureLayer){
 		
+			//Get form elements to populate attributes
+			var locDescription = $("#locDesc").val();
+			var submitter = $("#submitter").val();
+			var twitterSub = $("#twitterHandle").val();
+			
 			var p = webMercatorUtils.geographicToWebMercator(new Point(x,y,new SpatialReference({wkid:4326})));
-			var g = new Graphic(p,null,{"LocDescrip":"somewhere","Submitter":"James","TwitterSub":"JD_McCarthy"});;
+			var g = new Graphic(p,null,{"LocDescrip":locDescription,"Submitter":submitter,"TwitterSub":twitterSub});
 			gooseFL.applyEdits([g],null,null);
 		});
 	}
@@ -375,11 +382,32 @@
 			 <!-- Collect the nav links, forms, and other content for toggling -->
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
-					<li><a href="#" data-toggle="modal" data-target="#myModal">Report a Goose Nest</a></li>
+					<li><a href="#" data-toggle="modal" data-target="#addLocationModal">Report a Goose Nest</a></li>
+					<li><a href="#" data-toggle="modal" data-target="#findRouteModal">Navigate</a></li>
 				</ul>
 			</div>
 		</div>
 	</nav>
+	
+	<!-- Modal for start screen -->
+	<div class="modal fade" id="startScreenModal" tabindex="-1" role="dialog" aria-labelledby="startScreenModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h4 class="modal-title" id="startScreenModalLabel">GooseWatch14</h4>
+		  </div>
+		  <div class="modal-body">
+			What would you like to do?
+			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#addLocationModal" data-dismiss="modal">Report a Nest</button>
+			<button id="goToNavigate" type="button" class="btn btn-default" data-toggle="modal" data-target="#findRouteModal" data-dismiss="modal">Navigate</button>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
 	
 	<!-- Modal form for adding a location -->
 	<div class="modal fade" id="addLocationModal" tabindex="-1" role="dialog" aria-labelledby="addLocLabel" aria-hidden="true">
@@ -390,10 +418,44 @@
 			<h4 class="modal-title" id="addLocLabel">Report a Nest Location</h4>
 		  </div>
 		  <div class="modal-body">
-			<label>Location
-				<input id="coords" type="text" placeholder="Current Location" />
-			</label>
-			<button type="button" class="btn btn-default" onClick="locateUser()"><span class="glyphicon glyphicon-map-marker"></span></a>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<label for="locDesc" class="control-label col-xs-4">Description of Location</label>
+					<div class="col-xs-8">
+						<input id="locDesc" type="text" placeholder="Ex: In between HH and AL" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="coords" class="control-label col-xs-4">Current Location</label>
+					<div class="col-xs-8">
+						<input id="coords" type="text" placeholder="Tap the button to the right to submit your current location" />
+						<button type="button" class="btn btn-default" onClick="locateUser()"><span class="glyphicon glyphicon-map-marker"></span></button>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label for="submitter" class="control-label col-xs-4">Your Name</label>
+					<div class="col-xs-8">
+						<input id="submitter" type="text" placeholder="" />
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label for="twitterHandle" class="control-label col-xs-4">Twitter Handle</label>
+					<div class="col-xs-8">
+						<input id="twitterHandle" type="text" placeholder="" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="sendTweet" class="control-label col-xs-4">Tweet my report</label>
+					<div class="col-xs-8">
+						<input id="sendTweet" type="checkbox" />
+					</div>
+					
+				</div>
+				
+				
+			</form>
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -438,24 +500,7 @@
 	  </div>
 	</div>
 
-<!-- Modal for start screen -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Do Stuff</h4>
-      </div>
-      <div class="modal-body">
-		<button type="button" class="btn btn-default" data-toggle="modal" data-target="#addLocationModal" data-dismiss="modal">Report a Nest</button>
-		<button id="goToNavigate" type="button" class="btn btn-default" data-toggle="modal" data-target="#findRouteModal" data-dismiss="modal">Navigate</button>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
+
 
    <div id="mapDiv"></div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
