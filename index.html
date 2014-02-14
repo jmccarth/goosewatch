@@ -1,616 +1,333 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>GooseWatch 2014</title>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>GooseWatch 2014</title>
 
-    <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-	<link href="css/bootstrap-theme.min.css" rel="stylesheet">
-	<!-- FontAwesome -->
-	<link rel="stylesheet" href="font-awesome-4.0.3/css/font-awesome.min.css">
-	<!-- Slider -->
-	<link href="css/slider.css" rel="stylesheet">
-	<!-- Esri CSS -->
-	<link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.8/js/esri/css/esri.css">
-	<style>
-	html,body,#mapDiv,.map.container{
-	  padding:0;
-	  margin:0;
-	  height:100%;
-	}
-	.slider{
-		width: 300px;
-	}
-	</style>
-
-  <!--<script>var dojoConfig = { parseOnLoad:true };</script>-->
-  <script src="http://js.arcgis.com/3.8compact/"></script>
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-	<script>
-	
-	
-    var map;
-	var gooseNestsURL = "http://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/GooseWatch14/FeatureServer/0";
-	var gooseFL;
-	var x, y;
-	var offCampusBuildings = ["AAC","AAR","ARC","GA","HSC","IHB","IQC","PHR","WSS","UAE"];
-	var buildings;
-	var results;
-	var stopSymbol, routeSymbol;
-	var routeParams, routeTask;
-	var bufferGraphics;
-	var bufferParams;
-	var gsvc;
-	var nestBuffers = [];
-	var addPointMode = false;
-	
-    require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","esri/geometry/webMercatorUtils","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query,webMercatorUtils){
+		<!-- Bootstrap CSS -->
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+		<!-- FontAwesome CSS -->
+		<link rel="stylesheet" href="font-awesome-4.0.3/css/font-awesome.min.css">
+		<!-- Esri CSS -->
+		<link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.8/js/esri/css/esri.css">
 		
-		gsvc = new GeometryService("http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer");
-		
-		$(window).load(function(){
-			$('#startScreenModal').modal('show');
-		});
-		buildings = new FeatureSet();
-		nestBuffers.push(new esri.tasks.FeatureSet());
-		nestBuffers.push(new esri.tasks.FeatureSet());
-		nestBuffers.push(new esri.tasks.FeatureSet());
-		
-	  map = new Map("mapDiv",{
-		basemap: "topo",
-		center: [-80.542, 43.471],
-		zoom: 16
-	  });
-
-	map.on("click",function(ev){
-		if(addPointMode){
-			var webmercPt = ev.mapPoint;
-			var llPt = webMercatorUtils.webMercatorToGeographic(webmercPt);
-			createNewLocation(llPt);
+		<style>
+		html,body,#mapDiv,.map.container{
+		  padding:0;
+		  margin:0;
+		  height:100%;
 		}
-	});
+		.navbar{
+			margin-bottom: 0;
+		}
+		</style>
+	
+		<!-- ESRI JS API -->
+		<script src="http://js.arcgis.com/3.8compact/"></script>
+
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+		  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<!-- Brains -->
+		<script>
+
+			//Globals
+			var map;
+			var gooseNestsURL = "http://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/GooseWatch14/FeatureServer/0";
+			var geometryServiceURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer";
+			var routeTaskURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Campus/uw_route/NAServer/Route?token=oxSF0Agd5ZoDEqJX3b0hcn4im9yhLs-yeQbAgxTn7gfD20WSqbk9qYBpaZMqVwBb86GV79qfaAu_3zsawq3tpzBefVkbcK81hghgCggBWEI.";
+			var uwBldgsURL = "https://api.uwaterloo.ca/v2/buildings/list.json?key=cb63602dd1fd2a14332405f8613b68ed&output=json&callback=populateBuildings&jsonp=?";
+			var gooseFL;
+			var x, y;
+			var offCampusBuildings = ["AAC","AAR","PHR","ARC","GA","HSC","WSS","180King"];
+			var buildings;
+			var results;
+			var stopSymbol, routeSymbol;
+			var routeParams, routeTask;
+			var bufferGraphics;
+			var bufferParams;
+			var gsvc;
+			var nestBuffers = [];
+			var addPointMode = false;
+	
+			require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","esri/geometry/webMercatorUtils","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query,webMercatorUtils){
+		
+				gsvc = new GeometryService(geometryServiceURL);
+		
+				// Show start screen
+				$(window).load(function(){
+					$('#startScreenModal').modal('show');
+				});
+		
+				//Create nested feature set to hold nest buffers at three levels
+				buildings = new FeatureSet();
+				nestBuffers.push(new esri.tasks.FeatureSet());
+				nestBuffers.push(new esri.tasks.FeatureSet());
+				nestBuffers.push(new esri.tasks.FeatureSet());
+
+				//Create the map
+				map = new Map("mapDiv",{
+					basemap: "topo",
+					center: [-80.542, 43.471],
+					zoom: 16
+				});
+				
+				//Create a new lat/long point when the user clicks on the map (if in add point mode)
+				map.on("click",function(ev){
+					if(addPointMode){
+						var webmercPt = ev.mapPoint;
+						var llPt = webMercatorUtils.webMercatorToGeographic(webmercPt);
+						populateLocationFromClick(llPt);
+					}
+				});
+				
+				//Initialize map contents once map has loaded
+				map.on("load", initLayers);
 	  
-	  	
-		function initLayers(){
-		  gooseFL = new FeatureLayer(gooseNestsURL,{
-			mode: FeatureLayer.MODE_SELECTION,
-			outFields: ["*"]
-		  });
-		  gooseFL.on("selection-complete",makeNestBuffers);
-		  map.addLayer(gooseFL);
-		  results = new GraphicsLayer();
-		  bufferGraphics = new GraphicsLayer();
-			
-			
-		  
-			//Set up routing parameters
-			routeTask = new RouteTask("http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Campus/uw_route/NAServer/Route?token=oxSF0Agd5ZoDEqJX3b0hcn4im9yhLs-yeQbAgxTn7gfD20WSqbk9qYBpaZMqVwBb86GV79qfaAu_3zsawq3tpzBefVkbcK81hghgCggBWEI.");
-			routeParams = new RouteParameters();
-			routeParams.stops = new FeatureSet();
-			routeParams.polygonBarriers = new FeatureSet();
-			routeParams.returnPolygonBarriers = true;
-			routeParams.outSpatialReference = {"wkid":102100};
-			routeParams.doNotLocateOnRestrictedElements = true;
-			
-			dojo.connect(routeTask, "onSolveComplete", showRoute);
-			//dojo.connect(routeTask, "onError", errorHandler);
-		  
-			//Set up routing symbology
-			stopSymbol = new SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_X).setSize(15);
-			stopSymbol.outline.setWidth(3);
-			routeSymbol = new SimpleLineSymbol().setColor(new dojo.Color([0,0,255,0.5])).setWidth(4);
+				/**
+					initLayers()
+					
+					Initializes all the layers after the map has loaded
+				*/
+				function initLayers(){
+					//Create the goose nest feature layer
+					//Using MODE_SELECTION because it's the only way I can find to make sure the nests are loaded before making buffers
+					gooseFL = new FeatureLayer(gooseNestsURL,{
+						mode: FeatureLayer.MODE_SELECTION,
+						outFields: ["*"]
+					});
+					
+					//When the features are selected create the nest buffers
+					gooseFL.on("selection-complete",makeNestBuffers);
+					
+					map.addLayer(gooseFL);
 
-			
-			// Get building data
-			dojo.io.script.get({
-			url: "https://api.uwaterloo.ca/v2/buildings/list.json?key=cb63602dd1fd2a14332405f8613b68ed&output=json&callback=populateBuildings&jsonp=?"
-			});
-			
-			map.addLayer(results);
-			map.addLayer(bufferGraphics);
-			
-			var selectAll = new Query;
-			selectAll.where = "1=1";
-			gooseFL.selectFeatures(selectAll,FeatureLayer.SELECTION_NEW);			
-		}
-	  	map.on("load", initLayers);	  
-		
-    });
-	
-	function makeNestBuffers(){
-		require(["esri/symbols/SimpleFillSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/GeometryService","esri/SpatialReference","esri/tasks/BufferParameters","esri/graphic","esri/InfoTemplate"],function(SimpleFillSymbol,SimpleLineSymbol,GeometryService,SpatialReference,BufferParameters,Graphic,InfoTemplate){
-			
-			//Set up nest symbol
-			var sfs = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
-							new dojo.Color([255, 255, 255]), 1),new dojo.Color([210, 105, 30, 0.9]));
-			
-			//for each nest location
-			dojo.forEach(gooseFL.graphics, function(nest,index){
-			
-				//Create graphic and add to map
-				//var infoTemplate = new esri.InfoTemplate("Goose Nest", desc);
-				var pt = nest.geometry;
-				//graphic = new esri.Graphic(pt, symbol);
-				//graphic.setInfoTemplate(infoTemplate);
-				//map.graphics.add(graphic)
-				//gooseFeatures.features.push(graphic);
-			
-				//Build buffers
-				//Set up buffer parameters
-				bufferParams = new BufferParameters();
-				bufferParams.distances = [ 12, 20, 30 ];
-				bufferParams.unit = GeometryService.UNIT_METER;
-				bufferParams.bufferSpatialReference = new SpatialReference({wkid: 102100});
-				bufferParams.outSpatialReference = map.spatialReference;			
-				bufferParams.geometries  = [ pt ];
-				
-				var buildInfoTemplate = function(nestDesc){
-					return function(bufResults){
-						var bufGraphic = new Graphic(bufResults[$("#fearSelector").val()],sfs);
-						routeParams.polygonBarriers.features.push(bufGraphic);	
-						var bufInfoTemplate = new InfoTemplate("Goose Nest", nestDesc);
-						//nestBuffers.features.push(bufGraphic);
-						bufferGraphics.add(bufGraphic);
-						nestBuffers[0].features.push(new Graphic(bufResults[0],sfs).setInfoTemplate(bufInfoTemplate));
-						nestBuffers[1].features.push(new Graphic(bufResults[1],sfs).setInfoTemplate(bufInfoTemplate));
-						nestBuffers[2].features.push(new Graphic(bufResults[2],sfs).setInfoTemplate(bufInfoTemplate));
-					};
-				};
-				
-				//Buffer the features and add the results as barriers to the routing task
-				gsvc.buffer(bufferParams,buildInfoTemplate(""));
-			});
-		});
-		
-		//generateRoute();
-	}
-	
-	
-	
-	function saveFeature(){
-		require(["esri/graphic","esri/geometry/Point","esri/geometry/webMercatorUtils","esri/SpatialReference","esri/layers/FeatureLayer"],function(Graphic,Point,webMercatorUtils,SpatialReference,FeatureLayer){
-		
-			//Get form elements to populate attributes
-			var locDescription = $("#locDesc").val();
-			var submitter = $("#submitter").val();
-			var twitterSub = $("#twitterHandle").val();
-			
-			var p = webMercatorUtils.geographicToWebMercator(new Point(x,y,new SpatialReference({wkid:4326})));
-			var g = new Graphic(p,null,{"LocDescrip":locDescription,"Submitter":submitter,"TwitterSub":twitterSub});
-			gooseFL.applyEdits([g],null,null);
-		});
-	}
-	
-	function locateUser(){
-		if(navigator.geolocation){  
-		  navigator.geolocation.getCurrentPosition(populateLocation);
-		  watchId = navigator.geolocation.watchPosition(populateLocation);
-		}
-		else{
-			$("#locationLink")[0].style.color = "red";
-		  alert("Browser doesn't support Geolocation. Visit http://caniuse.com to discover browser support for the Geolocation API.");
-		}
-	  }
+					//Create graphics layers to hold buffer graphics and route results
+					results = new GraphicsLayer();
+					bufferGraphics = new GraphicsLayer();
+				  
+					//Set up routing parameters
+					routeTask = new RouteTask(routeTaskURL);
+					routeParams = new RouteParameters();
+					routeParams.stops = new FeatureSet();
+					routeParams.polygonBarriers = new FeatureSet();
+					routeParams.returnPolygonBarriers = true;
+					routeParams.outSpatialReference = {"wkid":102100};
+					routeParams.doNotLocateOnRestrictedElements = true;
+					
+					//Routing events
+					routeTask.on("solve-complete",showRoute);
+					routeTask.on("error",routeErrorHandler);
+				  
+					//Set up routing symbology
+					stopSymbol = new SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_X).setSize(15);
+					stopSymbol.outline.setWidth(3);
+					routeSymbol = new SimpleLineSymbol().setColor(new dojo.Color([0,0,255,0.5])).setWidth(4);
 
-	
-	function populateLocation(location){
-		//Put coordinates in text box
-		var coords = $("#coords");
-		x = location.coords.longitude;
-		y = location.coords.latitude;
-		loc = x + "," + y;
-		coords.val(loc);
-		
-		
-		//Lock down text box and change colour of map icon
-		$("#coords")[0].disabled = true;
-		$("#locationLink")[0].style.color = "green";
-	}
-	
-	function generateRoute(){
-		results.clear();
-		
-		//What are the start and end buildings?
-		var buildingA = dojo.byId("buildingSelectorA").value;
-		var buildingB = dojo.byId("buildingSelectorB").value;
-		
-		//if this stays true, find a route
-		var findRoute = true;
-		
-		//User has not specified a building
-		if (buildingA == ""){
-			alert("Please select a valid start location");
-			hide('loadingDialog');
-			show('setupRoute');
-			findRoute = false;
-		}
-		if (buildingB == ""){
-			alert("Please select a valid end location");
-			hide('loadingDialog');
-			show('setupRoute');
-			findRoute = false;
-		}
-		
-		//Make sure buildings aren't the same
-		if (buildingA == buildingB && buildingA != ""){
-			alert("Your start and end location must be different");
-			hide('loadingDialog');
-			show('setupRoute');
-			findRoute = false;
-		}
-		
-		//All is OK above, so find the route
-		if (findRoute){
-		/*
-			if (useLocation == true){
-				//if using 1 building and device location
-				dojo.forEach(buildings.features, function(value,index){
-					if (value.attributes.Acronym == buildingB){
-						//Once the building is found add it as a stop
-						addStop(value);
-						//Make a graphic out of the user's most recent location and add it as a stop
-						var g = new esri.Graphic(esri.geometry.webMercatorToGeographic(currLocation))
-						addStop(g);
-					}
-				});
-			}
-		*/	
-			//else if (useLocation == false){ //will use when we support GPS
-			
-				// if using 2 buildings
-				dojo.forEach(buildings.features, function(value,index){
-					if (value.attributes.Acronym == buildingA || value.attributes.Acronym == buildingB){
-						//When a building is found add it as a stop
-						addStop(value);
-					}
-				});
-			//}
-		}
-	}
-	
-	/**
-		showRoute
-		Called when the route is successfully solved. Displays resulting route on map
-		and sets the map's extent to show the entire route.
-	*/
-	function showRoute(solveResult){
-		results.add(solveResult.routeResults[0].route.setSymbol(routeSymbol));
-		map.setExtent(solveResult.routeResults[0].route.geometry.getExtent(),true);
-	}
-	
-	/*
-	function updateBufferDist(){			
-		bufferGraphics.clear();
-		routeParams.polygonBarriers = new esri.tasks.FeatureSet();
-		//value = dojo.byId("fearSlider").value;
-		//value = dojo.byId("fearSlider").getAttribute("aria-valuenow")
-		value = 0
-		dojo.forEach(nestBuffers[value].features,function(nestBuf,index){
-			routeParams.polygonBarriers.features.push(nestBuf);
-			bufferGraphics.add(nestBuf);
-		});
-		
-		
-		
-		if (value == 0){
-			dojo.byId("fearLevelLabel").innerHTML = "I'm Not";
-		}
-		else if (value == 1){
-			dojo.byId("fearLevelLabel").innerHTML = "I'm Cautious";
-		}
-		else if (value == 2){
-			dojo.byId("fearLevelLabel").innerHTML = "I'm Terrified";
-		}
-	}
-	*/
-	
-	/**
-		errorHandler
-		Called when something goes wrong with the route.
-	*/
-	function errorHandler(err){
-		//TODO: Check if this works
-		if(useLocation){				
-			var bldgB = dojo.byId("buildingSelectorB").value;
-			alert("A route could not be found between (" + currLocation.x + ", " + currLocation.y + ") and " + bldgB);
-		}
-		else{
-			var bldgA = dojo.byId("buildingSelectorA").value;
-			var bldgB = dojo.byId("buildingSelectorB").value;
-			alert("A route could not be found between " + bldgA + " and " + bldgB);
-		}
-			
-		routeParams.stops = new esri.tasks.FeatureSet();
-		map.graphics.clear();
-		resetRouting();
-	}
-	
-	/**
-		addStop
-		Takes a graphic and adds it as a stop to the routing problem. When there are two stops added,
-		launch the routing task.
-	*/
-	function addStop(stop){
-		var barriersToRemove = [];
-		s = results.add(new esri.Graphic(esri.geometry.geographicToWebMercator(stop.geometry),stopSymbol));
-		routeParams.stops.features.push(s);
-		if (routeParams.stops.features.length >= 2){
-			bufferGraphics.clear();
-			var fearval = $("#fearSelector").val();
-			dojo.forEach(nestBuffers[fearval].features,function(nestBuf,index){
-				routeParams.polygonBarriers.features.push(nestBuf);
-				bufferGraphics.add(nestBuf);
+					
+					// Get building data from uWaterloo API
+					dojo.io.script.get({
+						url: uwBldgsURL
+					});
+					
+					//Add graphics layers to map
+					map.addLayer(results);
+					map.addLayer(bufferGraphics);
+					
+					//Select all nests to get them on the map
+					var selectAll = new Query;
+					selectAll.where = "1=1";
+					gooseFL.selectFeatures(selectAll,FeatureLayer.SELECTION_NEW);			
+				}  
 			});
-			//Loop through polygon barriers and check if they contain the start or end point. If so, remove them.
-			dojo.forEach(routeParams.polygonBarriers.features,function(barrier,index){
-				if(barrier.geometry.contains(routeParams.stops.features[0].geometry) || barrier.geometry.contains(routeParams.stops.features[1].geometry)){
-					barriersToRemove.push(index);
-				}
-			});
-			dojo.forEach(barriersToRemove.reverse(),function(bIndex){ //Must reverse list of features to remove to avoid screwing up indices
-				routeParams.polygonBarriers.features.splice(bIndex,1);
-			});
-			if(barriersToRemove.length > 0){
-				alert("Note, your start or end point is close to a goose nest. Proceed with caution.");
-			}
-			routeTask.solve(routeParams);
-		}
-	}
-	
-	
-	/**
-		populateBuildings
-		Goes through the JSON response of building points, builds the 2 pick lists,
-		and the featureset object to hold all buildings not in the offCampusBuildings list
-	*/
-	function populateBuildings(data){
-		
-		dojo.forEach(data.data,function(value,index){
-			bldg = value.building_code;
-			if (offCampusBuildings.indexOf(bldg) == -1){
-				bldgDesc = value.building_code + " (" + value.building_name + ")";
-				dojo.byId("buildingSelectorA").options.add(new Option(bldgDesc,bldg));
-				dojo.byId("buildingSelectorB").options.add(new Option(bldgDesc,bldg));
-				
-				var pt = new esri.geometry.Point(value.longitude,value.latitude);
-				var sym = new esri.symbol.SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_SQUARE).setColor(new dojo.Color([255,0,0,0.5]));
-				var attr = {"Acronym":value.building_code,"Name":value.building_name};
-				var b = new esri.Graphic(pt,sym,attr);
-				buildings.features.push(b);
-			}
-		});
-		sortSelect(document.getElementById('buildingSelectorA'));
-		sortSelect(document.getElementById('buildingSelectorB'));
-	}
-	
-	function sortSelect(selElem) {
-        var tmpAry = new Array();
-        for (var i=0;i<selElem.options.length;i++) {
-            tmpAry[i] = new Array();
-            tmpAry[i][0] = selElem.options[i].text;
-            tmpAry[i][1] = selElem.options[i].value;
-        }
-        tmpAry.sort();
-        while (selElem.options.length > 0) {
-            selElem.options[0] = null;
-        }
-        for (var i=0;i<tmpAry.length;i++) {
-            var op = new Option(tmpAry[i][0], tmpAry[i][1]);
-            selElem.options[i] = op;
-        }
-        return;
-    }
-	
-	function enablePointSelection(){
-		addPointMode = true;
-	}
-	
-	function disablePointSelection(){
-		addPointMode = false;
-	}
-	
-	function createNewLocation(pt){
-		x = pt.x;
-		y = pt.y;
-		var coords = $("#coords");
-		var loc = x + "," + y;
-		coords.val(loc);
-		$("#coords")[0].disabled = true;
-		$("#addLocationModal").modal('show');
-		disablePointSelection();
-	}
-	
-  </script>
-  </head>
-  <body>
-    <nav class="navbar navbar-inverse" role="navigation">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				
-				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="#">GooseWatch14</a>
-			</div>
-			 <!-- Collect the nav links, forms, and other content for toggling -->
-			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-				<ul class="nav navbar-nav">
-					<li><a href="#" data-toggle="modal" data-target="#addLocationModal">Report a Goose Nest</a></li>
-					<li><a href="#" data-toggle="modal" data-target="#findRouteModal">Navigate</a></li>
-				</ul>
-			</div>
-		</div>
-	</nav>
-	
-	<!-- Modal for start screen -->
-	<div class="modal fade" id="startScreenModal" tabindex="-1" role="dialog" aria-labelledby="startScreenModalLabel" aria-hidden="true">
-	  <div class="modal-dialog">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h4 class="modal-title" id="startScreenModalLabel">GooseWatch14</h4>
-		  </div>
-		  <div class="modal-body">
-				<p class="text-center">What would you like to do?</p>
-				<div class="btn-group-wrap" style="text-align: center;">
-					<div class="btn-group-vertical">
-						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#addLocationModal" data-dismiss="modal">Report a Nest</button>
-						<button id="goToNavigate" type="button" class="btn btn-default" data-toggle="modal" data-target="#findRouteModal" data-dismiss="modal">Navigate</button>
-					</div>
+		</script>
+	</head>
+	<body>
+		<!-- Header navigation bar -->
+		<nav class="navbar navbar-inverse" role="navigation">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+						<span class="sr-only">Toggle navigation</span>
+						<i class="fa fa-bars" style="color:white;"></i>
+					</button>
+					<a class="navbar-brand" href="#">GooseWatch 2014</a>
 				</div>
-			
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		  </div>
-		</div>
-	  </div>
-	</div>
-	
-	<!-- Modal form for adding a location -->
-	<div class="modal fade" id="addLocationModal" tabindex="-1" role="dialog" aria-labelledby="addLocLabel" aria-hidden="true">
-	  <div class="modal-dialog">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h4 class="modal-title" id="addLocLabel">Report a Nest Location</h4>
-		  </div>
-		  <div class="modal-body">
-			<form class="form-horizontal">
-				
-				<div class="panel panel-default">
-					<div class="panel-heading">Choose Location</div>
-					<div class="panel-body">
-						<div style="text-align: center;">
-							<button type="button" class="btn btn-default form-control" data-dismiss="modal" onclick="enablePointSelection()">Pick Point on Map</button>
-							OR
-							<button id="locationLink" type="button" class="btn btn-default form-control" onclick="locateUser()">Use Current Device Location</button>
-							<div class="form-group">
-								<div class="input-group">
-									<span class="input-group-addon"><i class="fa fa-compass"></i></span>
-									<input id="coords" type="text" placeholder="" class="form-control"/>
+				 <!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li><a href="#" data-toggle="modal" data-target="#addLocationModal">Report a Nest</a></li>
+						<li><a href="#" data-toggle="modal" data-target="#findRouteModal">Navigate</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+		
+		<!-- Modal for start screen -->
+		<div class="modal fade" id="startScreenModal" tabindex="-1" role="dialog" aria-labelledby="startScreenModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="startScreenModalLabel">GooseWatch14</h4>
+					</div>
+					<div class="modal-body">
+						<p class="text-center">What would you like to do?</p>
+							<div class="btn-group-wrap" style="text-align: center;">
+								<div class="btn-group-vertical">
+									<button type="button" class="btn btn-default" data-toggle="modal" data-target="#addLocationModal" data-dismiss="modal">Report a Nest</button>
+									<button id="goToNavigate" type="button" class="btn btn-default" data-toggle="modal" data-target="#findRouteModal" data-dismiss="modal">Navigate</button>
 								</div>
 							</div>
-						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 					</div>
 				</div>
-				
-				<div class="form-group">
-					<div class="input-group">
-						<span class="input-group-addon"><i class="fa fa-comment"></i></span>
-						<input id="locDesc" type="text" placeholder="Location description (optional)" class="form-control"/>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<div class="input-group">
-						<span class="input-group-addon"><i class="fa fa-user"></i></span>
-						<input id="submitter" type="text" placeholder="Name (optional)" class="form-control"/>
-					</div>
-				</div>
-				
-				<div class="form-group">
-					<div class="input-group">
-						<span class="input-group-addon"><i class="fa fa-twitter"></i></span>
-						<input id="twitterHandle" type="text" placeholder="Twitter handle (optional)" class="form-control"/>
-					</div>
-				</div>			
-			</form>
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#submitToTwitterModal" data-dismiss="modal" onclick="saveFeature()">Submit</button>
-		  </div>
+			</div>
 		</div>
-	  </div>
-	</div>
-	
-	<!-- Modal for also submitting to Twitter -->
-	<div class="modal fade" id="submitToTwitterModal" tabindex="-1" role="dialog" aria-labelledby="submitToTwitterLabel" aria-hidden="true">
-	  <div class="modal-dialog">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h4 class="modal-title" id="findRouteLabel">Thanks for your submission to Goosewatch 2014!</h4>
-		  </div>
-		  <div class="modal-body">
-			<p>
-			Your submitted location will be reviewed before being placed on the map. Use the button below if you want to share your submission on Twitter.
-			</p>
-			<a href="https://twitter.com/intent/tweet?button_hashtag=goosewatch2014&text=I%20just%20submitted%20a%20goose%20nest%20location" class="twitter-hashtag-button" data-size="large">Tweet #goosewatch2014</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>	
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		  </div>
+		
+		<!-- Modal form for adding a location -->
+		<div class="modal fade" id="addLocationModal" tabindex="-1" role="dialog" aria-labelledby="addLocLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="addLocLabel">Report a Nest Location</h4>
+					</div>
+					<div class="modal-body">
+						<form class="form-horizontal">
+							<div class="panel panel-default">	
+								<div class="panel-heading">Choose Location</div>
+								<div class="panel-body">
+									<div style="text-align: center;">
+										<button type="button" class="btn btn-default form-control" data-dismiss="modal" onclick="enablePointSelection()">Pick Point on Map</button>
+										OR
+										<button id="locationLink" type="button" class="btn btn-default form-control" onclick="locateUser()">Use Current Device Location</button>
+										<div class="form-group">
+											<div class="input-group">
+												<span class="input-group-addon"><i class="fa fa-compass"></i></span>
+												<input id="coords" type="text" placeholder="" class="form-control"/>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+					
+							<div class="form-group">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-comment"></i></span>
+									<input id="locDesc" type="text" placeholder="Location description (optional)" class="form-control"/>
+								</div>
+							</div>
+					
+							<div class="form-group">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-user"></i></span>
+									<input id="submitter" type="text" placeholder="Name (optional)" class="form-control"/>
+								</div>
+							</div>
+					
+							<div class="form-group">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-twitter"></i></span>
+									<input id="twitterHandle" type="text" placeholder="Twitter handle (optional)" class="form-control"/>
+								</div>
+							</div>			
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#submitToTwitterModal" data-dismiss="modal" onclick="saveFeature()">Submit</button>
+					</div>
+				</div>
+			</div>
 		</div>
-	  </div>
-	</div>
-
-	<!-- Modal form for finding a route -->
-	<div class="modal fade" id="findRouteModal" tabindex="-1" role="dialog" aria-labelledby="findRouteLabel" aria-hidden="true">
-	  <div class="modal-dialog">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h4 class="modal-title" id="findRouteLabel">Goosewatch 2014 - Find a Route</h4>
-		  </div>
-		  <div class="modal-body">
-			<form class="form-horizontal">
-				<div class="input-group">
-					<span class="input-group-addon">From:</span>
-					<select id="buildingSelectorA" class="form-control">		
-						<!--<option id="myLocOpt" value="gps">My Location</option>-->
-						<option value="">--</option>
-					</select>
+		
+		<!-- Modal for also submitting to Twitter -->
+		<div class="modal fade" id="submitToTwitterModal" tabindex="-1" role="dialog" aria-labelledby="submitToTwitterLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="findRouteLabel">Thanks for your submission to Goosewatch 2014!</h4>
+					</div>
+					<div class="modal-body">
+						<p>
+							Your submitted location will be reviewed before being placed on the map. Use the button below if you want to share your submission on Twitter.
+						</p>
+						<!-- Twitter widget -->
+						<a href="https://twitter.com/intent/tweet?button_hashtag=goosewatch2014&text=I%20just%20submitted%20a%20goose%20nest%20location" class="twitter-hashtag-button" data-size="large">Tweet #goosewatch2014</a>
+						<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>	
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
 				</div>
-				<div class="input-group">
-					<span class="input-group-addon">To:</span>
-					<select id="buildingSelectorB" class="form-control">
-						<option value="">--</option>
-					</select>
-				</div>
-				<div class="input-group">
-					<span class="input-group-addon">Fear of Geese</span>
-					<select id="fearSelector" class="form-control">
-						<option value="0">None</option>
-						<option value="1">Cautious</option>
-						<option value="2">Terrified</option>
-					</select>
-				</div>
-				
-				
-			</form>
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="generateRoute()">Find Route</button>
-		  </div>
+			</div>
 		</div>
-	  </div>
-	</div>
 
+		<!-- Modal form for finding a route -->
+		<div class="modal fade" id="findRouteModal" tabindex="-1" role="dialog" aria-labelledby="findRouteLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="findRouteLabel">Goosewatch 2014 - Find a Route</h4>
+					</div>
+					<div class="modal-body">
+						<form class="form-horizontal">
+							<div class="input-group">
+								<span class="input-group-addon">From:</span>
+								<select id="buildingSelectorA" class="form-control">		
+									<!--<option id="myLocOpt" value="gps">My Location</option>-->
+									<option value="">--</option>
+								</select>
+							</div>
+							<div class="input-group">
+								<span class="input-group-addon">To:</span>
+								<select id="buildingSelectorB" class="form-control">
+									<option value="">--</option>
+								</select>
+							</div>
+							<div class="input-group">
+								<span class="input-group-addon">Fear of Geese</span>
+								<select id="fearSelector" class="form-control">
+									<option value="0">None</option>
+									<option value="1">Cautious</option>
+									<option value="2">Terrified</option>
+								</select>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="validateAndAddStops()">Find Route</button>
+					</div>
+				</div>
+			</div>
+		</div>
 
-
-   <div id="mapDiv"></div>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://code.jquery.com/jquery.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
-	<!-- modernizr -->
-	<script src="js/modernizr-dev.js"></script>
-	<!-- Slider JS -->
-	<script src="js/bootstrap-slider.js"></script>
-  </body>
+		<div id="mapDiv"></div>
+		
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script src="https://code.jquery.com/jquery.js"></script>
+		<!-- Include all compiled plugins (below), or include individual files as needed -->
+		<script src="js/bootstrap.min.js"></script>
+		<!-- modernizr -->
+		<script src="js/modernizr-dev.js"></script>
+		<!-- Slider JS -->
+		<script src="js/bootstrap-slider.js"></script>
+		<!-- More Brains -->
+		<script src="js/navigation.js"></script>
+		<script src="js/reporting.js"></script>
+		<script src="js/util.js"></script>
+	</body>
 </html>
