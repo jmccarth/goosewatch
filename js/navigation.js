@@ -56,7 +56,7 @@ function makeNestBuffers() {
             var buildInfoTemplate = function(nestDesc){
                 return function(bufResults){
                     var bufGraphic = new Graphic(bufResults[$("#fearSelector").val()],sfs);
-                    routeParams.polygonBarriers.features.push(bufGraphic);	
+                    //routeParams.polygonBarriers.features.push(bufGraphic);	
                     var bufInfoTemplate = new InfoTemplate("Goose Nest", nestDesc);
                     //nestBuffers.features.push(bufGraphic);
                     bufferGraphics.add(bufGraphic);
@@ -169,8 +169,8 @@ function addStop(stop){
 	and sets the map's extent to show the entire route.
 */
 function showRoute(solveResult){
-	results.add(solveResult.routeResults[0].route.setSymbol(routeSymbol));
-	map.setExtent(solveResult.routeResults[0].route.geometry.getExtent(),true);
+	results.add(solveResult.result.routeResults[0].route.setSymbol(routeSymbol));
+	map.setExtent(solveResult.result.routeResults[0].route.geometry.getExtent(),true);
 }
 
 /**
