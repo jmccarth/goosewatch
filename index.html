@@ -13,7 +13,8 @@
 		<link rel="stylesheet" href="font-awesome-4.0.3/css/font-awesome.min.css">
 		<!-- Esri CSS -->
 		<link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.8/js/esri/css/esri.css">
-		
+		<link rel="stylesheet" type='text/css' href='http://serverapi.arcgisonline.com/jsapi/arcgis/2.4/js/esri/dijit/css/Popup.css'/>
+		<link rel="stylesheet" type='text/css' href='http://serverapi.arcgisonline.com/jsapi/arcgis/2.4/js/esri/dijit/css/PopupMobile.css'/>
 		<style>
 		html,body,#mapDiv,.map.container{
 		  padding:0;
@@ -57,7 +58,7 @@
 			var nestBuffers = [];
 			var addPointMode = false;
 	
-			require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","esri/geometry/webMercatorUtils","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query,webMercatorUtils){
+			require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","esri/geometry/webMercatorUtils","esri/dijit/PopupTemplate","esri/dijit/PopupMobile","dojo/dom-construct","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query,webMercatorUtils,PopupTemplate,PopupMobile,domConstruct){
 		
 				gsvc = new GeometryService(geometryServiceURL);
 		
@@ -71,13 +72,24 @@
 				nestBuffers.push(new esri.tasks.FeatureSet());
 				nestBuffers.push(new esri.tasks.FeatureSet());
 				nestBuffers.push(new esri.tasks.FeatureSet());
-
+				
+				//create a popup to replace the map's info window
+				var popup = new PopupMobile(null, dojo.create("div"));
+				
+				
 				//Create the map
 				map = new Map("mapDiv",{
 					basemap: "topo",
 					center: [-80.542, 43.471],
-					zoom: 16
+					zoom: 16,
+					infoWindow: popup
 				});
+				
+				/*var infoWindow = new InfoWindowLite(null, domConstruct.create("div", null, null, map.root));
+				infoWindow.startup();
+				map.setInfoWindow(infoWindow);*/
+				
+				
 				
 				//Create a new lat/long point when the user clicks on the map (if in add point mode)
 				map.on("click",function(ev){
@@ -87,6 +99,7 @@
 						populateLocationFromClick(llPt);
 					}
 				});
+				
 				
 				//Initialize map contents once map has loaded
 				map.on("load", initLayers);
@@ -99,6 +112,7 @@
 					Initializes all the layers after the map has loaded
 				*/
 				function initLayers(){
+					
 					//Create the goose nest feature layer
 					//Using MODE_SELECTION because it's the only way I can find to make sure the nests are loaded before making buffers
 					gooseFL = new FeatureLayer(gooseNestsURL,{
@@ -110,6 +124,34 @@
 					gooseFL.on("selection-complete",makeNestBuffers);
 					//Add attachments if they exist once a new feature is created
 					gooseFL.on("edits-complete",attachPhoto);
+					
+					//This is based on the forum post here: http://forums.arcgis.com/threads/77989-Display-Image-Attachments-in-Popup
+					gooseFL.on("click",function(e){
+						var objectId, el;
+						objectId = e.graphic.attributes[gooseFL.objectIdField];
+						gooseFL.queryAttachmentInfos(objectId, function (infos) {
+							map.infoWindow.setTitle(objectId);
+							
+							$("#nestDate")[0].innerHTML = "Date: " + e.graphic.attributes.DateSubmit;
+							$("#nestDescription")[0].innerHTML = "Location: " + e.graphic.attributes.LocDescrip;
+							$("#nestSubmitter")[0].innerHTML = "Submitted by: " + e.graphic.attributes.Submitter;
+							$("#nestTwitter")[0].innerHTML = "Twitter: " + e.graphic.attributes.TwitterSub;
+							if(!!$("#nestImagePlaceholder").children()){
+								$("#nestImagePlaceholder").children().remove();
+							}
+							
+							if (!!infos[0]) {
+								el = document.createElement('img');
+								el.setAttribute('src', infos[0].url);
+								el.setAttribute('style','width:90%');
+								$("#nestImagePlaceholder").prepend(el);
+								$("#nestModal").modal("show");
+							}
+							else{
+								$("#nestModal").modal("show");
+							}
+						});
+					});
 					
 					map.addLayer(gooseFL);
 
@@ -143,7 +185,7 @@
 					
 					//Add graphics layers to map
 					map.addLayer(results);
-					map.addLayer(bufferGraphics);
+					map.addLayer(bufferGraphics,0);
 					
 					//Select all nests to get them on the map
 					var selectAll = new Query;
@@ -326,6 +368,27 @@
 			</div>
 		</div>
 
+		<div id="nestModal" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					  <div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">Goose Nest</h4>
+					  </div>
+					  <div class="modal-body">
+						<div id="nestDate"></div>
+						<div id="nestDescription"></div>
+						<div id="nestSubmitter"></div>
+						<div id="nestTwitter"></div>
+						<div id="nestImagePlaceholder"></div>
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					  </div>
+				</div>
+			</div>
+		</div>
+		
 		<div id="mapDiv"></div>
 		
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
