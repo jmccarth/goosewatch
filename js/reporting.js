@@ -12,12 +12,24 @@ function saveFeature(){
 		var submitter = $("#submitter").val();
 		var twitterSub = $("#twitterHandle").val();
 		
+	
+		
 		//Convert global x and y (which are in lat/long) to Web Mercator
 		var p = webMercatorUtils.geographicToWebMercator(new Point(x,y,new SpatialReference({wkid:4326})));
 		
 		//Create a graphic from that point and add it to the feature layer
 		var g = new Graphic(p,null,{"LocDescrip":locDescription,"Submitter":submitter,"TwitterSub":twitterSub});
 		gooseFL.applyEdits([g],null,null);
+	});
+}
+
+function attachPhoto(ftrEditResult){
+	gooseFL.addAttachment(ftrEditResult.adds[0].objectId,document.getElementById("addNestForm"),
+	function(feresult){
+		console.log(feresult);
+	},
+	function(errorResult){
+		console.log("Error adding attachment:" + errorResult);
 	});
 }
 
