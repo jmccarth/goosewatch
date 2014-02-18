@@ -49,7 +49,10 @@ function populateLocationFromDevice(location){
 
 	//Lock down text box and change colour of map icon
 	$("#coords")[0].disabled = true;
-	$("#locationLink")[0].style.color = "green";
+	$("#mapMarker")[0].style.color = "green";
+	
+	//Enable submission
+	$("#submitNest")[0].disabled = false;
 }
 
 /**
@@ -65,9 +68,13 @@ function populateLocationFromClick(pt){
 	var loc = x + "," + y;
 	coords.val(loc);
 	$("#coords")[0].disabled = true;
+	$("#mapMarker")[0].style.color = "green";
 	$("#addLocationModal").modal('show');
 	//Disable point selection mode so user can interact with the map again
 	disablePointSelection();
+	
+	//Enable submission
+	$("#submitNest")[0].disabled = false;
 }
 
 /**
