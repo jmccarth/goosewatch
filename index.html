@@ -132,7 +132,10 @@
 						gooseFL.queryAttachmentInfos(objectId, function (infos) {
 							map.infoWindow.setTitle(objectId);
 							
-							$("#nestDate")[0].innerHTML = "Date: " + e.graphic.attributes.DateSubmit;
+							
+							var d = new Date(e.graphic.attributes.DateSubmit);
+							
+							$("#nestDate")[0].innerHTML = "Date: " + d.toLocaleDateString();
 							$("#nestDescription")[0].innerHTML = "Location: " + e.graphic.attributes.LocDescrip;
 							$("#nestSubmitter")[0].innerHTML = "Submitted by: " + e.graphic.attributes.Submitter;
 							$("#nestTwitter")[0].innerHTML = "Twitter: " + e.graphic.attributes.TwitterSub;
