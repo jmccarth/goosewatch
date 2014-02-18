@@ -12,13 +12,14 @@ function saveFeature(){
 		var submitter = $("#submitter").val();
 		var twitterSub = $("#twitterHandle").val();
 		
-	
+		var currentDate = new Date();
+        var dateString = ((currentDate.getMonth() + 1) + "/" + currentDate.getDate() + "/" + currentDate.getFullYear());
 		
 		//Convert global x and y (which are in lat/long) to Web Mercator
 		var p = webMercatorUtils.geographicToWebMercator(new Point(x,y,new SpatialReference({wkid:4326})));
 		
 		//Create a graphic from that point and add it to the feature layer
-		var g = new Graphic(p,null,{"LocDescrip":locDescription,"Submitter":submitter,"TwitterSub":twitterSub});
+		var g = new Graphic(p,null,{"LocDescrip":locDescription,"Submitter":submitter,"TwitterSub":twitterSub,"DateSubmit":dateString});
 		gooseFL.applyEdits([g],null,null);
 	});
 }
