@@ -34,12 +34,32 @@ html, body, .goose {
 	color:#fff;
 }
 
+.goose .topbar ul {
+	height:100%;
+	list-style-type:none;
+	margin:0;
+	padding:0;
+}
+
+.goose .topbar ul li {
+	display:table;
+	margin-right:1em;
+	float:left;
+	height:100%;
+}
+
 .goose .topbar a {
-	position:relative;
+	display:table-cell;
+	background:#333;
+	padding:0 1em;
+	vertical-align:middle;
 	color:#fff;
 	font-size:150%;
-	display:inline-block;
-	vertical-align:middle;
+}
+
+.goose .topbar a:hover {
+	background:#555;
+	text-decoration:none;
 }
 
 .goose .bottombar {
