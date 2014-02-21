@@ -31,25 +31,31 @@
 
 	<body class="goose">
 
-		<div class="topbar">
+		<div class="bar topbar">
 			<ul>
-				<li><a href="#" data-toggle="modal" data-target="#addLocationModal">Report a Nest</a></li>
-				<li><a href="#" data-toggle="modal" data-target="#findRouteModal">Navigate</a></li>
+				<li style="float:right"><a href="#"><img src="img/GooseHashTag.svg" /></a></li>
+				<li><a href="#"><img src="img/SuccessOfficeLogo.svg" /></a></li>
+				<li><a href="#"><img src="img/GooseMapLogo.svg" /></a></li>
 			</ul>
 		</div>
 
-		<div class="map">
-
+		<div class="map" id="mapDiv">
+			<div class="btns">
+				<a class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#addLocationModal">Report a Nest</a>
+				<a class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#findRouteModal">Navigate</a>
+			</div>
 		</div>
 
-		<div class="bottombar">
-
+		<div class="bar bottombar">
+			<ul>
+				<li><a href="http://uwaterloo.ca"><img src="img/uWaterlooLogo.svg" /></a></li>
+			</ul>
 		</div>
 		<!-- Header navigation bar -->
 		
 		<!-- Modal for start screen -->
 		
-		<div class="map" id="mapDiv"></div>
+		
 
 		<div class="modal fade" id="startScreenModal" tabindex="-1" role="dialog" aria-labelledby="startScreenModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
@@ -229,8 +235,10 @@
 		<script src="https://code.jquery.com/jquery.js"></script>
 
 		<script>
-			$(function() {
-				$('body').load('modals.html');		
+			var $body = $('body');
+
+			$(window).on('resize orientationchange', function() {
+				$('<style>body{}</style>').appendTo($body).remove();
 			});
 		</script>
 
