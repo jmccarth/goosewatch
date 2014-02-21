@@ -97,7 +97,13 @@ function validateAndAddStops(){
     //Handle the case where a user sets their start location to their current device location
     if (buildingA == "gps"){
         useDeviceLoc = true;
-        locateUser();
+        //locateUser();
+        if(navigator.geolocation){  
+            navigator.geolocation.getCurrentPosition(addStopFromDeviceLocation);
+        }
+        else{
+            alert("Browser doesn't support Geolocation. Visit http://caniuse.com to discover browser support for the Geolocation API.");
+        }
     }
     
 	//User has not specified a building
@@ -127,6 +133,25 @@ function validateAndAddStops(){
 	}
 }
 
+function addStopFromDeviceLocation(location){
+    require(["esri/geometry/Point","esri/graphic","esri/geometry/webMercatorUtils","esri/SpatialReference","esri/tasks/FeatureSet"],function(Point,Graphic,webMercatorUtils,SpatialReference,FeatureSet){
+        //Put coordinates in text box
+        var coords = $("#coords");
+        x = location.coords.longitude;
+        y = location.coords.latitude;
+        loc = x + "," + y;
+        coords.val(loc);
+        var pt = new Point(x, y, new SpatialReference({ wkid: 4326 }));
+        currentDeviceLoc = new Graphic(pt);
+        if (extentLayer.fullExtent.contains(webMercatorUtils.geographicToWebMercator(currentDeviceLoc.geometry))){
+            addStop(currentDeviceLoc);
+        }
+        else{
+            alert("Your device is currently off campus. We cannot find a route for you.");
+            routeParams.stops = new FeatureSet();
+        }
+    });
+}
 /**
 	addStop()
 	
