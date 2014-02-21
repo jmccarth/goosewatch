@@ -38,23 +38,12 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 	nestBuffers.push(new esri.tasks.FeatureSet());
 	nestBuffers.push(new esri.tasks.FeatureSet());
 	
-	//create a popup to replace the map's info window
-	var popup = new PopupMobile(null, dojo.create("div"));
-	
-	
 	//Create the map
 	map = new Map("mapDiv",{
 		basemap: "topo",
 		center: [-80.542, 43.471],
 		zoom: 16,
-		infoWindow: popup
 	});
-	
-	/*var infoWindow = new InfoWindowLite(null, domConstruct.create("div", null, null, map.root));
-	infoWindow.startup();
-	map.setInfoWindow(infoWindow);*/
-	
-	
 	
 	//Create a new lat/long point when the user clicks on the map (if in add point mode)
 	map.on("click",function(ev){
@@ -98,7 +87,6 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 			var objectId, el;
 			objectId = e.graphic.attributes[gooseFL.objectIdField];
 			gooseFL.queryAttachmentInfos(objectId, function (infos) {
-				map.infoWindow.setTitle(objectId);
 				
 				
 				var d = new Date(e.graphic.attributes.DateSubmit);
