@@ -59,12 +59,12 @@ function makeNestBuffers() {
                 return function(bufResults){
                     var bufGraphic = new Graphic(bufResults[$("#fearSelector").val()],sfs);
                     //routeParams.polygonBarriers.features.push(bufGraphic);	
-                    var bufInfoTemplate = new InfoTemplate("Goose Nest", nestDesc);
+                    var bufInfoTemplate = new InfoTemplate();
                     //nestBuffers.features.push(bufGraphic);
                     bufferGraphics.add(bufGraphic);
-                    nestBuffers[0].features.push(new Graphic(bufResults[0],sfs).setInfoTemplate(bufInfoTemplate));
-                    nestBuffers[1].features.push(new Graphic(bufResults[1],sfs).setInfoTemplate(bufInfoTemplate));
-                    nestBuffers[2].features.push(new Graphic(bufResults[2],sfs).setInfoTemplate(bufInfoTemplate));
+                    nestBuffers[0].features.push(new Graphic(bufResults[0],sfs));
+                    nestBuffers[1].features.push(new Graphic(bufResults[1],sfs));
+                    nestBuffers[2].features.push(new Graphic(bufResults[2],sfs));
                 };
             };
 				
