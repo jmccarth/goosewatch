@@ -51,8 +51,7 @@ function populateLocationFromDevice(location){
         var pt = new Point(x, y, new SpatialReference({ wkid: 4326 }));
         currentDeviceLoc = new Graphic(pt);
         if (extentLayer.fullExtent.contains(webMercatorUtils.geographicToWebMercator(currentDeviceLoc.geometry))){
-            //TODO - don't need to regenerate the route every time the location changes
-            addStop(currentDeviceLoc);
+            
             //Lock down text box and change colour of map icon
             $("#coords")[0].disabled = true;
             $("#mapMarker")[0].style.color = "green";
