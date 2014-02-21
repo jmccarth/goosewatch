@@ -27,6 +27,7 @@ function populateBuildings(data){
 	//Sort the two lists based on their text content
 	sortSelect(document.getElementById('buildingSelectorA'));
     dojo.byId("buildingSelectorA").options.add(new Option("Use My Location","gps"),0);
+    $("#buildingSelectorA").val("gps")
 	sortSelect(document.getElementById('buildingSelectorB'));
 }
 
