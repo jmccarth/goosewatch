@@ -90,7 +90,16 @@ function validateAndAddStops(){
 	
 	//if this stays true, find a route
 	var findRoute = true;
+    
+    //if this becomes true use the device location as the start instead of a building
+    useDeviceLoc = false;
 	
+    //Handle the case where a user sets their start location to their current device location
+    if (buildingA == "gps"){
+        useDeviceLoc = true;
+        locateUser();
+    }
+    
 	//User has not specified a building
 	if (buildingA == ""){
 		alert("Please select a valid start location");
@@ -109,12 +118,12 @@ function validateAndAddStops(){
 	
 	//All is OK above, find the route
 	if (findRoute){
-		dojo.forEach(buildings.features, function(value,index){
-			if (value.attributes.Acronym == buildingA || value.attributes.Acronym == buildingB){
-				//When a building is found add it as a stop
-				addStop(value);
-			}
-		});
+        dojo.forEach(buildings.features, function(value,index){
+            if (value.attributes.Acronym == buildingA || value.attributes.Acronym == buildingB){
+                //When a building is found add it as a stop
+                addStop(value);
+            }
+        });
 	}
 }
 

@@ -41,19 +41,32 @@ function attachPhoto(ftrEditResult){
 	disables editing on it, and notifies the user by changing the button's colour to green.
 */
 function populateLocationFromDevice(location){
-	//Put coordinates in text box
-	var coords = $("#coords");
-	x = location.coords.longitude;
-	y = location.coords.latitude;
-	loc = x + "," + y;
-	coords.val(loc);
+    require(["esri/geometry/Point","esri/graphic","esri/geometry/webMercatorUtils","esri/SpatialReference"],function(Point,Graphic,webMercatorUtils,SpatialReference){
+        //Put coordinates in text box
+        var coords = $("#coords");
+        x = location.coords.longitude;
+        y = location.coords.latitude;
+        loc = x + "," + y;
+        coords.val(loc);
+        var pt = new Point(x, y, new SpatialReference({ wkid: 4326 }));
+        currentDeviceLoc = new Graphic(pt);
+        if (extentLayer.fullExtent.contains(webMercatorUtils.geographicToWebMercator(currentDeviceLoc.geometry))){
+            //TODO - don't need to regenerate the route every time the location changes
+            addStop(currentDeviceLoc);
+            //Lock down text box and change colour of map icon
+            $("#coords")[0].disabled = true;
+            $("#mapMarker")[0].style.color = "green";
 
-	//Lock down text box and change colour of map icon
-	$("#coords")[0].disabled = true;
-	$("#mapMarker")[0].style.color = "green";
-	
-	//Enable submission
-	$("#submitNest")[0].disabled = false;
+            //Enable submission
+            $("#submitNest")[0].disabled = false;
+        }
+        else{
+            if(!alerted){
+                alert("Your device is reporting a location that is not on the UW campus."); 
+                alerted = true;
+            }
+        }
+    });
 }
 
 /**
