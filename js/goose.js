@@ -23,7 +23,7 @@ var useDeviceLoc;
 var extentLayer;
 var alerted = false;
 
-require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","esri/geometry/webMercatorUtils","esri/dijit/PopupTemplate","esri/dijit/PopupMobile","dojo/dom-construct","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query,webMercatorUtils,PopupTemplate,PopupMobile,domConstruct){
+require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","esri/geometry/webMercatorUtils","esri/dijit/PopupTemplate","esri/dijit/PopupMobile","esri/renderers/SimpleRenderer","esri/symbols/PictureMarkerSymbol","dojo/dom-construct","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query,webMercatorUtils,PopupTemplate,PopupMobile,SimpleRenderer,PictureMarkerSymbol,domConstruct){
 
 	gsvc = new GeometryService(geometryServiceURL);
 
@@ -67,12 +67,16 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 	*/
 	function initLayers(){
 		
+        //Goose nest symbol
+        var nestSymbol = new PictureMarkerSymbol("img/NestLocationsGoose.svg",30,30);
+        var nestRenderer = new SimpleRenderer(nestSymbol);
 		//Create the goose nest feature layer
 		//Using MODE_SELECTION because it's the only way I can find to make sure the nests are loaded before making buffers
 		gooseFL = new FeatureLayer(gooseNestsURL,{
 			mode: FeatureLayer.MODE_SELECTION,
 			outFields: ["*"]
 		});
+        gooseFL.setRenderer(nestRenderer);
 		
 		//When the features are selected create the nest buffers
 		gooseFL.on("selection-complete",makeNestBuffers);
