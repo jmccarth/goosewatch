@@ -25,6 +25,8 @@ var alerted = false;
 
 require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","esri/geometry/webMercatorUtils","esri/dijit/PopupTemplate","esri/dijit/PopupMobile","esri/renderers/SimpleRenderer","esri/symbols/PictureMarkerSymbol","dojo/dom-construct","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query,webMercatorUtils,PopupTemplate,PopupMobile,SimpleRenderer,PictureMarkerSymbol,domConstruct){
 
+    $('.carousel').carousel()
+    
 	gsvc = new GeometryService(geometryServiceURL);
 
 	// Show start screen
@@ -100,16 +102,20 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 				$("#nestSubmitter")[0].innerHTML = "Submitted by: " + e.graphic.attributes.Submitter;
 				$("#nestTwitter")[0].innerHTML = "Twitter: " + e.graphic.attributes.TwitterSub;
                 $("#nestOID")[0].value = e.graphic.attributes.FID;
-				if(!!$("#nestImagePlaceholder").children()){
-					$("#nestImagePlaceholder").children().remove();
+				if(!!$("#carouselSlides").children()){
+					$("#carouselSlides").children().remove();
 				}
 				
 				if (!!infos[0]) {
                     for (var i=0; i < infos.length; i++){
-                        el = document.createElement('img');
+                        var slide = document.createElement('div');
+                        var attvalue = i==0 ? "item active" : "item";
+                        slide.setAttribute('class',attvalue);
+                        var el = document.createElement('img');
                         el.setAttribute('src', infos[i].url);
                         el.setAttribute('style','width:90%');
-                        $("#nestImagePlaceholder").prepend(el);
+                        slide.appendChild(el);
+                        $("#carouselSlides").prepend(slide);
                     }
 					$("#nestModal").modal("show");
 				}
