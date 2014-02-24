@@ -148,7 +148,7 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 		
 		//Add graphics layers to map
 		map.addLayer(results);
-		map.addLayer(bufferGraphics,0);
+		//map.addLayer(bufferGraphics,0);
 		
 		//Select all nests to get them on the map
 		var selectAll = new Query;

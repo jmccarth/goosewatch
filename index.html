@@ -60,16 +60,19 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h3 class="modal-title" id="startScreenModalLabel">GooseWatch14</h3>
+						<h3 class="modal-title" id="startScreenModalLabel">Goose Watch '14</h3>
 					</div>
 					<div class="modal-body">
 						<h4 class="text-center">What would you like to do?</h4>
 						<div class="btn-group btn-group-justified">
 							<div class="btn-group">
-								<button type="button" class="btn btn-default" data-toggle="modal" data-target="#addLocationModal" data-dismiss="modal">Report a Nest</button>
+								<button type="button" class="btn btn-default" data-toggle="modal" data-target="#addLocationModal" data-dismiss="modal">Submit a Nest</button>
 							</div>
 							<div class="btn-group">
-								<button id="goToNavigate" type="button" class="btn btn-default" data-toggle="modal" data-target="#findRouteModal" data-dismiss="modal">Navigate</button>
+								<button id="goToNavigate" type="button" class="btn btn-default" data-toggle="modal" data-target="#findRouteModal" data-dismiss="modal">Find Route</button>
+							</div>
+                            <div class="btn-group">
+								<button id="View map" type="button" class="btn btn-default" data-toggle="modal" data-dismiss="modal">View Map</button>
 							</div>
 						</div>
 					</div>
@@ -86,7 +89,7 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h3 class="modal-title" id="addLocLabel">Report a Nest Location</h4>
+						<h3 class="modal-title" id="addLocLabel">Submit nest</h4>
 					</div>
 					<div class="modal-body">
 						<form id="addNestForm">
@@ -112,7 +115,7 @@
 							<div class="form-group">
 								<div class="input-group">
 									<span class="input-group-addon"><i class="fa fa-comment"></i></span>
-									<input id="locDesc" type="text" placeholder="Location description (optional)" class="form-control"/>
+									<input id="locDesc" type="text" placeholder="Give us some details (ex. Courtyard, SLC)" class="form-control"/>
 								</div>
 							</div>
 	
@@ -191,11 +194,11 @@
 								</select>
 							</div>
 							<div class="form-group">
-								<label for="fearSelector">Fear of Geese</label>
+								<label for="fearSelector">Comfort Level</label>
 								<select id="fearSelector" class="form-control">
-									<option value="0">None</option>
-									<option value="1">Cautious</option>
-									<option value="2">Terrified</option>
+									<option value="0">I'm comfortable near nests</option>
+									<option value="1">I'm cautious</option>
+									<option value="2">I want to keep my distance</option>
 								</select>
 							</div>
 						</form>
@@ -246,6 +249,8 @@
 		<script src="js/modernizr-dev.js"></script>
 		<!-- Slider JS -->
 		<script src="js/bootstrap-slider.js"></script>
+        <!-- File input styler -->
+        <script type="text/javascript" src="js/bootstrap-filestyle.min.js"></script>
 		<!-- More Brains -->
 		<script src="js/navigation.js"></script>
 		<script src="js/reporting.js"></script>
