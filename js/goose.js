@@ -99,15 +99,18 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 				$("#nestDescription")[0].innerHTML = "Location: " + e.graphic.attributes.LocDescrip;
 				$("#nestSubmitter")[0].innerHTML = "Submitted by: " + e.graphic.attributes.Submitter;
 				$("#nestTwitter")[0].innerHTML = "Twitter: " + e.graphic.attributes.TwitterSub;
+                $("#nestOID")[0].value = e.graphic.attributes.FID;
 				if(!!$("#nestImagePlaceholder").children()){
 					$("#nestImagePlaceholder").children().remove();
 				}
 				
 				if (!!infos[0]) {
-					el = document.createElement('img');
-					el.setAttribute('src', infos[0].url);
-					el.setAttribute('style','width:90%');
-					$("#nestImagePlaceholder").prepend(el);
+                    for (var i=0; i < infos.length; i++){
+                        el = document.createElement('img');
+                        el.setAttribute('src', infos[i].url);
+                        el.setAttribute('style','width:90%');
+                        $("#nestImagePlaceholder").prepend(el);
+                    }
 					$("#nestModal").modal("show");
 				}
 				else{
