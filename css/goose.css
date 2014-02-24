@@ -92,6 +92,15 @@ html, body, .goose {
 	z-index:9999;
 }
 
+.goose .map .sharebtn {
+    position:absolute;
+	right:15px;
+	bottom:15px;
+	width:10%;
+	max-width:200px;
+	z-index:9999;
+}
+
 .goose .btn-primary {
 	background:#f4c430;
 	color:#000;
