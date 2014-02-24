@@ -25,13 +25,11 @@ function saveFeature(){
 }
 
 function attachPhoto(ftrEditResult){
-	gooseFL.addAttachment(ftrEditResult.adds[0].objectId,document.getElementById("addNestForm"),
-	function(feresult){
-		console.log(feresult);
-	},
-	function(errorResult){
-		console.log("Error adding attachment:" + errorResult);
-	});
+	gooseFL.addAttachment(ftrEditResult.adds[0].objectId,document.getElementById("addNestForm"));
+}
+
+function addNewPhoto(){
+    gooseFL.addAttachment($("#nestOID")[0].value,document.getElementById("addPhotoToNestForm"));
 }
 
 /**
