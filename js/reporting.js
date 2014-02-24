@@ -45,11 +45,11 @@ function populateLocationFromDevice(location){
         x = location.coords.longitude;
         y = location.coords.latitude;
         loc = x + "," + y;
-        coords.val(loc);
+        
         var pt = new Point(x, y, new SpatialReference({ wkid: 4326 }));
         currentDeviceLoc = new Graphic(pt);
         if (extentLayer.fullExtent.contains(webMercatorUtils.geographicToWebMercator(currentDeviceLoc.geometry))){
-            
+            coords.val(loc);
             //Lock down text box and change colour of map icon
             $("#coords")[0].disabled = true;
             $("#mapMarker")[0].style.color = "green";
@@ -62,6 +62,7 @@ function populateLocationFromDevice(location){
                 alert("Your device is reporting a location that is not on the UW campus."); 
                 alerted = true;
             }
+            $("#mapMarker")[0].style.color = "red";
         }
     });
 }
