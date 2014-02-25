@@ -30,11 +30,17 @@
 	<body class="goose">
 
 		<div class="bar topbar">
-			<ul>
-				<li style="float:right"><a href="#"><img src="img/GooseHashTag.svg" /></a></li>
-				<li><a href="#"><img src="img/SuccessOfficeLogo.svg" /></a></li>
-				<li><a href="#"><img src="img/GooseMapLogo.svg" /></a></li>
-			</ul>
+			<div class="split-container">
+				<div class="cell one-quarter text-left">
+					<a href="https://uwaterloo.ca/student-success/"><img src="img/SuccessOfficeLogo.svg" /></a>
+				</div>
+				<div class="cell one-half text-center">
+					<a href="#"><img src="img/GooseMapLogo.svg" /></a>
+				</div>
+				<div class="cell one-quarter text-right">
+					<a href="#"><img src="img/GooseHashTag.svg" /></a>
+				</div>
+			</div>
 		</div>
 
 		<div class="map" id="mapDiv">
@@ -45,9 +51,36 @@
 		</div>
 
 		<div class="bar bottombar">
-			<ul>
-				<li><a href="http://uwaterloo.ca"><img src="img/uWaterlooLogo.svg" /></a></li>
-			</ul>
+			<div class="split-container">
+				<div class="cell one-quarter text-left">
+					<a href="http://uwaterloo.ca"><img src="img/uWaterlooLogo.svg" /></a>
+				</div>
+				<div class="cell one-half text-center">
+					<div id="carousel" class="carousel slide" data-ride="carousel">
+
+					  <!-- Wrapper for slides -->
+						<div class="carousel-inner">
+							<div class="item active">
+								The first of a few tips
+							</div>
+							<div class="item">
+								The second of a few tips much longer breaking into multiple lines
+							</div>
+						</div>
+
+					  <!-- Controls -->
+						<a class="left carousel-control" href="#carousel" data-slide="prev">
+							<span class="glyphicon glyphicon-chevron-left"></span>
+						</a>
+						<a class="right carousel-control" href="#carousel" data-slide="next">
+							<span class="glyphicon glyphicon-chevron-right"></span>
+						</a>
+					</div>
+				</div>
+				<div class="cell one-quarter text-right">
+					Powered by MAD
+				</div>
+			</div>
 		</div>
 		<!-- Header navigation bar -->
 		
@@ -238,6 +271,11 @@
 			$(window).on('resize orientationchange', function() {
 				$('<style>body{}</style>').appendTo($body).remove();
 			});
+
+			$(function() {
+				$('<style>body{}</style>').appendTo($body).remove();
+			});
+
 		</script>
 
 		<!-- Include all compiled plugins (below), or include individual files as needed -->
