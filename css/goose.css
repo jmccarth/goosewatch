@@ -30,7 +30,7 @@ html, body, .goose {
 	display:table-cell;
 	vertical-align:middle;
 	height:100%;
-	padding:0 2%;
+	padding:0 1.25%;
 }
 
 .one-quarter {
@@ -59,6 +59,12 @@ html, body, .goose {
 	color:#fff;
 }
 
+.goose .bar a.big {
+	display:inline-block;
+	width:100%;
+	height:75%;
+}
+
 .goose .topbar {
 	position:absolute;
 	top:0;
@@ -72,6 +78,7 @@ html, body, .goose {
 .goose .bar img {
 	max-height:100%;
 	max-width:100%;
+	height:100%;
 	/*max-width:100%;*/
 	/*max-height:90%;*/
 }
