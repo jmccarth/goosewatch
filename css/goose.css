@@ -51,6 +51,14 @@ html, body, .goose {
 	height:100%;
 }
 
+.goose .bar {
+	font-size:2.5vmin;
+}
+
+.goose .bar a {
+	color:#fff;
+}
+
 .goose .topbar {
 	position:absolute;
 	top:0;
@@ -59,10 +67,6 @@ html, body, .goose {
 	left:0;
 	background:#000;
 	color:#fff;
-}
-
-.goose .bar {
-	font-size:2.5vmin;
 }
 
 .goose .bar img {
@@ -129,7 +133,13 @@ html, body, .goose {
 	display:table-cell;
 	vertical-align:middle;
 	overflow:hidden;
-	padding:0 5%;
+}
+
+.goose .carousel .next, .goose .carousel .prev {
+}
+
+.goose .carousel .item {
+	padding:0 7%;
 }
 
 .goose .carousel-control {
@@ -154,4 +164,9 @@ html, body, .goose {
 	background:#000;
 	color:#fff;
 	border-radius:0 0 15px 15px;
+}
+
+.goose table th {
+	text-align:right;
+	width:25%;
 }

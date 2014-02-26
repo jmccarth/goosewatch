@@ -5422,15 +5422,15 @@ button.close {
   position: relative;
 }
 .carousel-inner {
-  position: relative;
+  position:relative;
   width: 100%;
   overflow: hidden;
 }
 .carousel-inner > .item {
-  position: relative;
+
   display: none;
-  -webkit-transition: .6s ease-in-out left;
-          transition: .6s ease-in-out left;
+  -webkit-transition: .6s ease-in-out left top;
+          transition: .6s ease-in-out left top;
 }
 .carousel-inner > .item > img,
 .carousel-inner > .item > a > img {
