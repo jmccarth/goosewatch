@@ -118,10 +118,10 @@ html, body, .goose {
 .goose .map .sharebtn {
     position:absolute;
 	right:15px;
-	bottom:15px;
-	width:10%;
+	bottom:50px;
+	width:25%;
 	max-width:200px;
-	z-index:9999;
+	z-index:3;
 }
 
 .goose .btn-primary {

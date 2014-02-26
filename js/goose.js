@@ -97,10 +97,10 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 				
 				var d = new Date(e.graphic.attributes.DateSubmit);
 				
-				$("#nestDate")[0].innerHTML = "Date: " + d.toLocaleDateString();
-				$("#nestDescription")[0].innerHTML = "Location: " + e.graphic.attributes.LocDescrip;
-				$("#nestSubmitter")[0].innerHTML = "Submitted by: " + e.graphic.attributes.Submitter;
-				$("#nestTwitter")[0].innerHTML = "Twitter: " + e.graphic.attributes.TwitterSub;
+				$("#nestDate")[0].innerHTML = d.toLocaleDateString();
+				$("#nestDescription")[0].innerHTML = e.graphic.attributes.LocDescrip;
+				$("#nestSubmitter")[0].innerHTML = e.graphic.attributes.Submitter;
+				$("#nestTwitter")[0].innerHTML = e.graphic.attributes.TwitterSub;
                 $("#nestOID")[0].value = e.graphic.attributes.FID;
 				if(!!$("#carouselSlides").children()){
 					$("#carouselSlides").children().remove();
