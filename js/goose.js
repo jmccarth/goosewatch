@@ -25,7 +25,15 @@ var alerted = false;
 
 require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","esri/geometry/webMercatorUtils","esri/dijit/PopupTemplate","esri/dijit/PopupMobile","esri/renderers/SimpleRenderer","esri/symbols/PictureMarkerSymbol","dojo/dom-construct","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query,webMercatorUtils,PopupTemplate,PopupMobile,SimpleRenderer,PictureMarkerSymbol,domConstruct){
 
-    $('.carousel').carousel()
+    $('#carousel').carousel();
+    
+    var $modals = $('.modal')
+    $modals.on('hidden.bs.modal',function(e){
+        unPauseEtiquetteCarousel();
+    });
+    $modals.on('shown.bs.modal',function(e){
+        pauseEtiquetteCarousel();
+    });
     
 	gsvc = new GeometryService(geometryServiceURL);
 
@@ -90,6 +98,7 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 		
 		//This is based on the forum post here: http://forums.arcgis.com/threads/77989-Display-Image-Attachments-in-Popup
 		gooseFL.on("click",function(e){
+            pauseEtiquetteCarousel();
 			var objectId, el;
 			objectId = e.graphic.attributes[gooseFL.objectIdField];
 			gooseFL.queryAttachmentInfos(objectId, function (infos) {
@@ -115,7 +124,7 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
                         el.setAttribute('src', infos[i].url);
                         el.setAttribute('style','width:90%');
                         slide.appendChild(el);
-                        $("#carouselSlides").prepend(slide);
+                        $("#carouselSlides").append(slide);
                     }
 					$("#nestModal").modal("show");
 				}
@@ -165,3 +174,11 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 		gooseFL.selectFeatures(selectAll,FeatureLayer.SELECTION_NEW);			
 	}  
 });
+
+function pauseEtiquetteCarousel(){
+    $("#carousel").carousel('pause');
+}
+
+function unPauseEtiquetteCarousel(){
+    $("#carousel").carousel('cycle');
+}
