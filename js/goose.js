@@ -106,20 +106,31 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 				$("#nestSubmitter")[0].innerHTML = e.graphic.attributes.Submitter;
 				$("#nestTwitter")[0].innerHTML = e.graphic.attributes.TwitterSub;
                 $("#nestOID")[0].value = e.graphic.attributes.FID;
-				if(!!$("#carouselSlides").children()){
+				if(!!$("#singleImagePlaceholder").children()){
+                    $("#singleImagePlaceholder").children().remove();
+                }
+                if(!!$("#carouselSlides").children()){
 					$("#carouselSlides").children().remove();
 				}
 				
 				if (!!infos[0]) {
-                    for (var i=0; i < infos.length; i++){
-                        var slide = document.createElement('div');
-                        var attvalue = i==0 ? "item active" : "item";
-                        slide.setAttribute('class',attvalue);
-                        var el = document.createElement('img');
-                        el.setAttribute('src', infos[i].url);
-                        el.setAttribute('style','width:90%');
-                        slide.appendChild(el);
-                        $("#carouselSlides").append(slide);
+                    if(infos.length == 1){
+                        var theImage = document.createElement('img');
+                        theImage.setAttribute('src', infos[0].url);
+                        theImage.setAttribute('style','width:90%');
+                        $("#singleImagePlaceholder").append(theImage);
+                    }
+                    else{
+                        for (var i=0; i < infos.length; i++){
+                            var slide = document.createElement('div');
+                            var attvalue = i==0 ? "item active" : "item";
+                            slide.setAttribute('class',attvalue);
+                            var el = document.createElement('img');
+                            el.setAttribute('src', infos[i].url);
+                            el.setAttribute('style','width:90%');
+                            slide.appendChild(el);
+                            $("#carouselSlides").append(slide);
+                        }
                     }
 					$("#nestModal").modal("show");
 				}
