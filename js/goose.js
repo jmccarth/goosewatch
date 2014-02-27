@@ -22,6 +22,8 @@ var watchId = -1;
 var useDeviceLoc;
 var extentLayer;
 var alerted = false;
+var routeAttributionText = "Esri Canada, MappedIn, ";
+var routeAttribution = "";
 
 require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","esri/geometry/webMercatorUtils","esri/dijit/PopupTemplate","esri/dijit/PopupMobile","esri/renderers/SimpleRenderer","esri/symbols/PictureMarkerSymbol","dojo/dom-construct","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query,webMercatorUtils,PopupTemplate,PopupMobile,SimpleRenderer,PictureMarkerSymbol,domConstruct){
 
@@ -58,6 +60,11 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 			populateLocationFromClick(llPt);
 		}
 	});
+    
+    //Modify the data attribution text when the map changes
+    map.on("extent-change",function(ev){
+        $(".esriAttributionLastItem").text(routeAttribution +  $(".esriAttributionLastItem").text());
+    });
 	
 	
 	//Initialize map contents once map has loaded
