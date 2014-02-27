@@ -207,6 +207,8 @@ function addStop(stop){
 function showRoute(solveResult){
 	results.add(solveResult.result.routeResults[0].route.setSymbol(routeSymbol));
 	map.setExtent(solveResult.result.routeResults[0].route.geometry.getExtent(),true);
+    //Modify attribution to include additional sources
+    routeAttribution = routeAttributionText;
 }
 
 /**
