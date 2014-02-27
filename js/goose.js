@@ -154,9 +154,8 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 		routeTask.on("error",routeErrorHandler);
 	  
 		//Set up routing symbology
-		stopSymbol = new SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_X).setSize(15);
-		stopSymbol.outline.setWidth(3);
-		routeSymbol = new SimpleLineSymbol().setColor(new dojo.Color([0,0,255,0.5])).setWidth(4);
+        stopSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 15, new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new dojo.Color([0,0,0]), 1), new dojo.Color([255,0,0,0.25]));
+		routeSymbol = new SimpleLineSymbol().setColor(new dojo.Color([0,255,0,0.75])).setWidth(4);
 
 		
 		// Get building data from uWaterloo API
