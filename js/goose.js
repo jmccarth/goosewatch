@@ -37,11 +37,6 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
     
 	gsvc = new GeometryService(geometryServiceURL);
 
-	// Show start screen
-	$(window).load(function(){
-		$('#startScreenModal').modal('show');
-	});
-
 	//Create nested feature set to hold nest buffers at three levels
 	buildings = new FeatureSet();
 	nestBuffers.push(new esri.tasks.FeatureSet());
