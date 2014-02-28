@@ -113,21 +113,17 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 				$("#nestSubmitter")[0].innerHTML = e.graphic.attributes.Submitter;
 				$("#nestTwitter")[0].innerHTML = e.graphic.attributes.TwitterSub;
                 $("#nestOID")[0].value = e.graphic.attributes.FID;
-				if(!!$("#singleImagePlaceholder").children()){
-                    $("#singleImagePlaceholder").children().remove();
-                }
-                if(!!$("#carouselSlides").children()){
-					$("#carouselSlides").children().remove();
-				}
+
+                
+                $("#nestImagePlaceholder").hide();
 				
 				if (!!infos[0]) {
-                    if(infos.length == 1){
-                        var theImage = document.createElement('img');
-                        theImage.setAttribute('src', infos[0].url);
-                        theImage.setAttribute('style','width:90%');
-                        $("#singleImagePlaceholder").append(theImage);
+                     if(!!$("#carouselSlides").children()){
+                        $("#carouselSlides").children().remove();
                     }
-                    else{
+
+                        $("#nestImagePlaceholder").show();
+                    
                         for (var i=0; i < infos.length; i++){
                             var slide = document.createElement('div');
                             var attvalue = i==0 ? "item active" : "item";
@@ -138,12 +134,19 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
                             slide.appendChild(el);
                             $("#carouselSlides").append(slide);
                         }
+                        if (infos.length == 1){
+                            $('.carousel-inner').each(function() {
+                                if ($(this).children('div').length === 1) $(this).siblings('.carousel-control, .carousel-indicators').hide();
+                            });
+                        }
+                        else{
+                             $('.carousel-inner').each(function() {
+                                if ($(this).children('div').length > 1) $(this).siblings('.carousel-control, .carousel-indicators').show();
+                            });
+                        }
                     }
 					$("#nestModal").modal("show");
-				}
-				else{
-					$("#nestModal").modal("show");
-				}
+				
 			});
 		});
 		
