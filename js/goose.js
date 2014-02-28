@@ -148,6 +148,8 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 		});
 		
 		map.addLayer(gooseFL);
+        
+
 
 		//Create graphics layers to hold buffer graphics and route results
 		results = new GraphicsLayer();
