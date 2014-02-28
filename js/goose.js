@@ -49,7 +49,7 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 	map = new Map("mapDiv",{
 		basemap: "topo",
 		center: [-80.542, 43.471],
-		zoom: 16,
+		zoom: 15,
 	});
 	
 	//Create a new lat/long point when the user clicks on the map (if in add point mode)
