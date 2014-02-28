@@ -40,6 +40,15 @@ function populateBuildings(data){
 */
 function makeNestBuffers() {
 	require(["esri/symbols/SimpleFillSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/GeometryService","esri/SpatialReference","esri/tasks/BufferParameters","esri/graphic","esri/InfoTemplate"],function(SimpleFillSymbol,SimpleLineSymbol,GeometryService,SpatialReference,BufferParameters,Graphic,InfoTemplate){
+        
+        
+        //Build the list of descriptions for screen readers
+        //Using the approach documented here: http://webaim.org/techniques/css/invisiblecontent/
+        $("#nestDescriptions")[0].innerHTML = "There are reported goose nests at the following locations: <br/>";
+        $.each(gooseFL.graphics,function(i,v){
+            $("#nestDescriptions")[0].innerHTML += v.attributes.LocDescrip + ";" ;
+        });
+        
         //Symbol for nests
         var sfs = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new dojo.Color([255, 255, 255]), 1),new dojo.Color([210, 105, 30, 0.9]));
 			
