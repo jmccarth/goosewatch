@@ -29,7 +29,20 @@ function attachPhoto(ftrEditResult){
 }
 
 function addNewPhoto(){
-    gooseFL.addAttachment($("#nestOID")[0].value,document.getElementById("addPhotoToNestForm"));
+    require(["esri/graphic","esri/geometry/Point","esri/geometry/webMercatorUtils","esri/SpatialReference"],function(Graphic,Point,webMercatorUtils,SpatialReference){
+        var currentDate = new Date();
+        var dateString = ((currentDate.getMonth() + 1) + "/" + currentDate.getDate() + "/" + currentDate.getFullYear());
+        
+        //Convert global x and y (which are in lat/long) to Web Mercator
+		var p = new Point($("#nestX")[0].value,$("#nestY")[0].value,new SpatialReference({wkid:102100}));
+
+        var g = new Graphic(p,null,{"Status":"Pending","NestID":$("#nestOID")[0].value,"DateSubmit":dateString});
+        submittedPicsFL.applyEdits([g],null,null); 
+    });
+}
+
+function attachNewPhoto(ftrEditResult){
+    submittedPicsFL.addAttachment(ftrEditResult.adds[0].objectId,document.getElementById("addPhotoToNestForm"));
 }
 
 /**
