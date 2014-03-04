@@ -33,6 +33,10 @@ html, body, .goose {
 	padding:0 1.25%;
 }
 
+.nopad {
+	padding:0 !important;
+}
+
 .one-quarter {
 	width:25%;
 }
@@ -43,6 +47,10 @@ html, body, .goose {
 
 .one-half {
 	width:50%;
+}
+
+.three-quarters {
+	width:75%;
 }
 
 .hidden {
@@ -71,7 +79,7 @@ html, body, .goose {
 .goose .bar a.big {
 	display:inline-block;
 	width:100%;
-	height:75%;
+	height:70%;
 }
 
 .goose .topbar {
