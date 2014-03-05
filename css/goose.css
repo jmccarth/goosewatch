@@ -77,9 +77,9 @@ html, body, .goose {
 }
 
 .goose .bar a.big {
-	display:inline-block;
+	/*display:inline-block;*/
 	width:100%;
-	height:70%;
+	height:100%;
 }
 
 .goose .topbar {
@@ -128,6 +128,7 @@ html, body, .goose {
 	right:15px;
 	top:15px;
 	width:25%;
+	min-width:8em;
 	max-width:200px;
 	z-index:2;
 }
@@ -137,6 +138,7 @@ html, body, .goose {
 	right:15px;
 	bottom:50px;
 	width:25%;
+	min-width:8em;
 	max-width:200px;
 	z-index:3;
 }
