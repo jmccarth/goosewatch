@@ -196,7 +196,9 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 		//Select all nests to get them on the map
 		var selectAll = new Query;
 		selectAll.where = "1=1";
-		gooseFL.selectFeatures(selectAll,FeatureLayer.SELECTION_NEW);			
+		gooseFL.selectFeatures(selectAll,FeatureLayer.SELECTION_NEW);		
+        
+        centerMapURL();
 	}  
 });
 
