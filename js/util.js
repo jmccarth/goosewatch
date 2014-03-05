@@ -37,3 +37,31 @@ function sortSelect(selElem) {
 	}
 	return;
 }
+
+function centerMapURL(){
+require(["esri/geometry/Point"],function(Point){
+    //Get query portion of URL (if any)
+    var url_query = location.search 
+    if (url_query !== ""){
+        //Parse out building and room names
+        var x = url_query.split("&")[0].split("=")[1];
+        var y = url_query.split("&")[1].split("=")[1];
+        var zoom = url_query.split("&")[2].split("=")[1];
+        
+        var pt = new Point([x,y]);
+        
+        map.centerAndZoom(pt,zoom);
+    }
+});}
+
+function generateShareURL(){
+require(["esri/geometry/webMercatorUtils"],function(webMercatorUtils){
+    var mapcenter = map.extent.getCenter();
+    var geo_pt = webMercatorUtils.webMercatorToGeographic(mapcenter);
+    var x = geo_pt.x.toFixed(3);
+    var y = geo_pt.y.toFixed(3);
+    var zoom = map.getZoom();
+    var shareURL = location.origin + "?x=" + x + "&y=" + y + "&zoom=" + zoom;
+    
+    alert(shareURL);
+});}
