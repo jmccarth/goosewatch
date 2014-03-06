@@ -27,7 +27,7 @@ var routeAttributionText = "Esri Canada, MappedIn, ";
 var routeAttribution = "";
 var submittedPicsFL;
 
-require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","esri/geometry/webMercatorUtils","esri/dijit/PopupTemplate","esri/dijit/PopupMobile","esri/renderers/SimpleRenderer","esri/symbols/PictureMarkerSymbol","dojo/dom-construct","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query,webMercatorUtils,PopupTemplate,PopupMobile,SimpleRenderer,PictureMarkerSymbol,domConstruct){
+require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","esri/geometry/webMercatorUtils","esri/dijit/PopupTemplate","esri/dijit/PopupMobile","esri/renderers/SimpleRenderer","esri/renderers/ScaleDependentRenderer","esri/symbols/PictureMarkerSymbol","dojo/dom-construct","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query,webMercatorUtils,PopupTemplate,PopupMobile,SimpleRenderer,ScaleDependentRenderer,PictureMarkerSymbol,domConstruct){
 
     $('#carousel').carousel();
     
@@ -84,15 +84,33 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
         submittedPicsFL = new FeatureLayer(submittedPicsURL);
         
         //Goose nest symbol
-        var nestSymbol = new PictureMarkerSymbol("img/NestLocationsGoose.svg",30,30);
-        var nestRenderer = new SimpleRenderer(nestSymbol);
+        var smallNestSymbol = new PictureMarkerSymbol("img/NestLocationsGoose.svg",30,30);
+        var largeNestSymbol = new PictureMarkerSymbol("img/NestLocationsGoose.svg",50,50);
+        var smallNestRenderer = new SimpleRenderer(smallNestSymbol);
+        var largeNestRenderer = new SimpleRenderer(largeNestSymbol);
+        
+        var rendererInfos = [
+            {
+                "renderer": smallNestRenderer,
+                "minZoom": 0,
+                "maxZoom":16
+            },
+            {
+                "renderer": largeNestRenderer,
+                "minZoom":17,
+                "maxZoom":19
+            }
+        ];
+        
+        var scaleDependentRenderer = new ScaleDependentRenderer();
+        scaleDependentRenderer.setRendererInfos(rendererInfos);
 		//Create the goose nest feature layer
 		//Using MODE_SELECTION because it's the only way I can find to make sure the nests are loaded before making buffers
 		gooseFL = new FeatureLayer(gooseNestsURL,{
 			mode: FeatureLayer.MODE_SELECTION,
 			outFields: ["*"]
 		});
-        gooseFL.setRenderer(nestRenderer);
+        gooseFL.setRenderer(scaleDependentRenderer);
 		
 		//When the features are selected create the nest buffers
 		gooseFL.on("selection-complete",makeNestBuffers);
