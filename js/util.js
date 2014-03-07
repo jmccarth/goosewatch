@@ -44,6 +44,7 @@ require(["esri/geometry/Point"],function(Point){
         //Get query portion of URL (if any)
         var url_query = location.search.split("?")[1];
         var x,y,useButtons,zoom;
+        var pt;
         if (url_query !== ""){
             $.each(url_query.split("&"),function(i,v){
                 key = v.split("=")[0];
@@ -69,9 +70,13 @@ require(["esri/geometry/Point"],function(Point){
                 $("#routeButton").hide();
             }
 
-            var pt = new Point([x,y]);
+            //make sure both x and y have values
+            if (!!x && !!y){
+                pt = new Point([x,y]);
+                map.centerAndZoom(pt,zoom);
+            }
 
-            map.centerAndZoom(pt,zoom);
+            
         }
     }
 });}
