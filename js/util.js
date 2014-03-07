@@ -47,6 +47,13 @@ require(["esri/geometry/Point"],function(Point){
         var x = url_query.split("&")[0].split("=")[1];
         var y = url_query.split("&")[1].split("=")[1];
         var zoom = url_query.split("&")[2].split("=")[1];
+        var useButtons = url_query.split("&")[3].split("=")[1];
+        
+        if (useButtons == "false"){
+            $("#shareButton").hide();
+            $("#submitButton").hide();
+            $("#routeButton").hide();
+        }
         
         var pt = new Point([x,y]);
         
