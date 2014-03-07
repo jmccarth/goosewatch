@@ -40,37 +40,39 @@ function sortSelect(selElem) {
 
 function centerMapURL(){
 require(["esri/geometry/Point"],function(Point){
-    //Get query portion of URL (if any)
-    var url_query = location.search.split("?")[1];
-    var x,y,useButtons,zoom;
-    if (url_query !== ""){
-        $.each(url_query.split("&"),function(i,v){
-            key = v.split("=")[0];
-            value = v.split("=")[1];
-            if(key=="x"){
-                x = value;
+    if (location.search != ""){
+        //Get query portion of URL (if any)
+        var url_query = location.search.split("?")[1];
+        var x,y,useButtons,zoom;
+        if (url_query !== ""){
+            $.each(url_query.split("&"),function(i,v){
+                key = v.split("=")[0];
+                value = v.split("=")[1];
+                if(key=="x"){
+                    x = value;
+                }
+                else if (key=="y"){
+                    y = value;
+                }
+                else if (key=="btns"){
+                    useButtons = value;
+                }
+                else if (key=="zoom"){
+                    zoom = value;
+                }
+            });
+
+
+            if (useButtons == "false"){
+                $("#shareButton").hide();
+                $("#submitButton").hide();
+                $("#routeButton").hide();
             }
-            else if (key=="y"){
-                y = value;
-            }
-            else if (key=="btns"){
-                useButtons = value;
-            }
-            else if (key=="zoom"){
-                zoom = value;
-            }
-        });
-        
-        
-        if (useButtons == "false"){
-            $("#shareButton").hide();
-            $("#submitButton").hide();
-            $("#routeButton").hide();
+
+            var pt = new Point([x,y]);
+
+            map.centerAndZoom(pt,zoom);
         }
-        
-        var pt = new Point([x,y]);
-        
-        map.centerAndZoom(pt,zoom);
     }
 });}
 
