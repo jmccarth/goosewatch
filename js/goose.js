@@ -52,6 +52,8 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 		basemap: "topo",
 		center: [-80.542, 43.471],
 		zoom: 15,
+        minZoom: 15,
+        maxZoom: 19
 	});
 	
 	//Create a new lat/long point when the user clicks on the map (if in add point mode)
@@ -92,7 +94,7 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
         var rendererInfos = [
             {
                 "renderer": smallNestRenderer,
-                "minZoom": 0,
+                "minZoom": 15,
                 "maxZoom":16
             },
             {
