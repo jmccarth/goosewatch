@@ -1,11 +1,11 @@
 //Globals
 var map;
-var gooseNestsURL = "https://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/GooseWatch14/FeatureServer/0";
+var gooseNestsURL = "http://env-gis-srv1.uwaterloo.ca:6080/arcgis/rest/services/goosewatch14/gw14_public/FeatureServer/1";
 var geometryServiceURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer";
 var routeTaskURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Campus/uw_route/NAServer/Route?token=oxSF0Agd5ZoDEqJX3b0hcn4im9yhLs-yeQbAgxTn7gfD20WSqbk9qYBpaZMqVwBb86GV79qfaAu_3zsawq3tpzBefVkbcK81hghgCggBWEI.";
 var extentLayerURL = "https://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/UW_Buildings/FeatureServer/0";
 var uwBldgsURL = "https://api.uwaterloo.ca/v2/buildings/list.json?key=***REMOVED***&output=json&callback=populateBuildings&jsonp=?";
-var submittedPicsURL = "http://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/SubmittedPhotos/FeatureServer/0";
+var submittedPicsURL = "http://env-gis-srv1.uwaterloo.ca:6080/arcgis/rest/services/goosewatch14/gw14_public/FeatureServer/0";
 var gooseFL;
 var x, y;
 var offCampusBuildings = ["AAC","AAR","PHR","ARC","GA","HSC","WSS","180King"];
@@ -132,13 +132,13 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 			gooseFL.queryAttachmentInfos(objectId, function (infos) {
 				
 				
-				var d = new Date(e.graphic.attributes.DateSubmit);
+				var d = new Date(e.graphic.attributes.submitdate);
 				
 				$("#nestDate")[0].innerHTML = d.toLocaleDateString();
-				$("#nestDescription")[0].innerHTML = e.graphic.attributes.LocDescrip;
-				$("#nestSubmitter")[0].innerHTML = e.graphic.attributes.Submitter;
-				$("#nestTwitter")[0].innerHTML = e.graphic.attributes.TwitterSub;
-                $("#nestOID")[0].value = e.graphic.attributes.FID;
+				$("#nestDescription")[0].innerHTML = e.graphic.attributes.description;
+				$("#nestSubmitter")[0].innerHTML = e.graphic.attributes.submitter;
+				$("#nestTwitter")[0].innerHTML = e.graphic.attributes.twitter;
+                $("#nestOID")[0].value = e.graphic.attributes.objectid;
                 $("#nestX")[0].value = e.graphic.geometry.x;
                 $("#nestY")[0].value = e.graphic.geometry.y;
 
@@ -215,7 +215,7 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 		
 		//Select all nests to get them on the map
 		var selectAll = new Query;
-		selectAll.where = "1=1";
+		selectAll.where = '"status"=1';
 		gooseFL.selectFeatures(selectAll,FeatureLayer.SELECTION_NEW);		
         
         centerMapURL();
