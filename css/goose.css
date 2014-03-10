@@ -37,6 +37,24 @@ html, body, .goose {
 	padding:0 !important;
 }
 
+@media all and (max-width:1024px) {
+	.cell.left, .cell.right {
+		width:25%;
+	}
+	.cell.middle {
+		width:50%;
+	}
+}
+
+@media all and (min-width:1025px) {
+	.cell.left, .cell.right {
+		width:15%;
+	}
+	.cell.middle {
+		width:70%;
+	}
+}
+
 .one-quarter {
 	width:25%;
 }
