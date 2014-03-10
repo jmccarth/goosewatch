@@ -19,7 +19,7 @@ function saveFeature(){
 		var p = webMercatorUtils.geographicToWebMercator(new Point(x,y,new SpatialReference({wkid:4326})));
 		
 		//Create a graphic from that point and add it to the feature layer
-		var g = new Graphic(p,null,{"LocDescrip":locDescription,"Submitter":submitter,"TwitterSub":twitterSub,"DateSubmit":dateString});
+		var g = new Graphic(p,null,{"Description":locDescription,"Submitter":submitter,"Twitter":twitterSub,"SubmitDate":dateString,"Status":0});
 		gooseFL.applyEdits([g],null,null);
 	});
 }
@@ -36,7 +36,7 @@ function addNewPhoto(){
         //Convert global x and y (which are in lat/long) to Web Mercator
 		var p = new Point($("#nestX")[0].value,$("#nestY")[0].value,new SpatialReference({wkid:102100}));
 
-        var g = new Graphic(p,null,{"Status":"Pending","NestID":$("#nestOID")[0].value,"DateSubmit":dateString});
+        var g = new Graphic(p,null,{"status":"0","nestid":$("#nestOID")[0].value,"submitdate":dateString});
         submittedPicsFL.applyEdits([g],null,null); 
     });
 }

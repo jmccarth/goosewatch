@@ -1,11 +1,11 @@
 //Globals
 var map;
-var gooseNestsURL = "https://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/GooseWatch14/FeatureServer/0";
+var gooseNestsURL = "http://env-gis-srv1.uwaterloo.ca:6080/arcgis/rest/services/goosewatch14/gw14_public/FeatureServer/1";
 var geometryServiceURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer";
 var routeTaskURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Campus/uw_route/NAServer/Route?token=oxSF0Agd5ZoDEqJX3b0hcn4im9yhLs-yeQbAgxTn7gfD20WSqbk9qYBpaZMqVwBb86GV79qfaAu_3zsawq3tpzBefVkbcK81hghgCggBWEI.";
 var extentLayerURL = "https://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/UW_Buildings/FeatureServer/0";
 var uwBldgsURL = "https://api.uwaterloo.ca/v2/buildings/list.json?key=***REMOVED***&output=json&callback=populateBuildings&jsonp=?";
-var submittedPicsURL = "http://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/SubmittedPhotos/FeatureServer/0";
+var submittedPicsURL = "http://env-gis-srv1.uwaterloo.ca:6080/arcgis/rest/services/goosewatch14/gw14_public/FeatureServer/0";
 var gooseFL;
 var x, y;
 var offCampusBuildings = ["AAC","AAR","PHR","ARC","GA","HSC","WSS","180King"];
@@ -27,7 +27,7 @@ var routeAttributionText = "Esri Canada, MappedIn, ";
 var routeAttribution = "";
 var submittedPicsFL;
 
-require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","esri/geometry/webMercatorUtils","esri/dijit/PopupTemplate","esri/dijit/PopupMobile","esri/renderers/SimpleRenderer","esri/symbols/PictureMarkerSymbol","dojo/dom-construct","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query,webMercatorUtils,PopupTemplate,PopupMobile,SimpleRenderer,PictureMarkerSymbol,domConstruct){
+require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","esri/geometry/webMercatorUtils","esri/dijit/PopupTemplate","esri/dijit/PopupMobile","esri/renderers/SimpleRenderer","esri/renderers/ScaleDependentRenderer","esri/symbols/PictureMarkerSymbol","dojo/dom-construct","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query,webMercatorUtils,PopupTemplate,PopupMobile,SimpleRenderer,ScaleDependentRenderer,PictureMarkerSymbol,domConstruct){
 
     $('#carousel').carousel();
     
@@ -52,6 +52,8 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 		basemap: "topo",
 		center: [-80.542, 43.471],
 		zoom: 15,
+        minZoom: 15,
+        maxZoom: 19
 	});
 	
 	//Create a new lat/long point when the user clicks on the map (if in add point mode)
@@ -84,15 +86,33 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
         submittedPicsFL = new FeatureLayer(submittedPicsURL);
         
         //Goose nest symbol
-        var nestSymbol = new PictureMarkerSymbol("img/NestLocationsGoose.svg",30,30);
-        var nestRenderer = new SimpleRenderer(nestSymbol);
+        var smallNestSymbol = new PictureMarkerSymbol("img/NestLocationsGoose.svg",30,30);
+        var largeNestSymbol = new PictureMarkerSymbol("img/NestLocationsGoose.svg",50,50);
+        var smallNestRenderer = new SimpleRenderer(smallNestSymbol);
+        var largeNestRenderer = new SimpleRenderer(largeNestSymbol);
+        
+        var rendererInfos = [
+            {
+                "renderer": smallNestRenderer,
+                "minZoom": 15,
+                "maxZoom":16
+            },
+            {
+                "renderer": largeNestRenderer,
+                "minZoom":17,
+                "maxZoom":19
+            }
+        ];
+        
+        var scaleDependentRenderer = new ScaleDependentRenderer();
+        scaleDependentRenderer.setRendererInfos(rendererInfos);
 		//Create the goose nest feature layer
 		//Using MODE_SELECTION because it's the only way I can find to make sure the nests are loaded before making buffers
 		gooseFL = new FeatureLayer(gooseNestsURL,{
 			mode: FeatureLayer.MODE_SELECTION,
 			outFields: ["*"]
 		});
-        gooseFL.setRenderer(nestRenderer);
+        gooseFL.setRenderer(scaleDependentRenderer);
 		
 		//When the features are selected create the nest buffers
 		gooseFL.on("selection-complete",makeNestBuffers);
@@ -112,13 +132,13 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 			gooseFL.queryAttachmentInfos(objectId, function (infos) {
 				
 				
-				var d = new Date(e.graphic.attributes.DateSubmit);
+				var d = new Date(e.graphic.attributes.submitdate);
 				
 				$("#nestDate")[0].innerHTML = d.toLocaleDateString();
-				$("#nestDescription")[0].innerHTML = e.graphic.attributes.LocDescrip;
-				$("#nestSubmitter")[0].innerHTML = e.graphic.attributes.Submitter;
-				$("#nestTwitter")[0].innerHTML = e.graphic.attributes.TwitterSub;
-                $("#nestOID")[0].value = e.graphic.attributes.FID;
+				$("#nestDescription")[0].innerHTML = e.graphic.attributes.description;
+				$("#nestSubmitter")[0].innerHTML = e.graphic.attributes.submitter;
+				$("#nestTwitter")[0].innerHTML = e.graphic.attributes.twitter;
+                $("#nestOID")[0].value = e.graphic.attributes.objectid;
                 $("#nestX")[0].value = e.graphic.geometry.x;
                 $("#nestY")[0].value = e.graphic.geometry.y;
 
@@ -195,7 +215,7 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 		
 		//Select all nests to get them on the map
 		var selectAll = new Query;
-		selectAll.where = "1=1";
+		selectAll.where = '"status"=1';
 		gooseFL.selectFeatures(selectAll,FeatureLayer.SELECTION_NEW);		
         
         centerMapURL();

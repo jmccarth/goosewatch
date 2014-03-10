@@ -40,17 +40,44 @@ function sortSelect(selElem) {
 
 function centerMapURL(){
 require(["esri/geometry/Point"],function(Point){
-    //Get query portion of URL (if any)
-    var url_query = location.search 
-    if (url_query !== ""){
-        //Parse out building and room names
-        var x = url_query.split("&")[0].split("=")[1];
-        var y = url_query.split("&")[1].split("=")[1];
-        var zoom = url_query.split("&")[2].split("=")[1];
-        
-        var pt = new Point([x,y]);
-        
-        map.centerAndZoom(pt,zoom);
+    if (location.search != ""){
+        //Get query portion of URL (if any)
+        var url_query = location.search.split("?")[1];
+        var x,y,useButtons,zoom;
+        var pt;
+        if (url_query !== ""){
+            $.each(url_query.split("&"),function(i,v){
+                key = v.split("=")[0];
+                value = v.split("=")[1];
+                if(key=="x"){
+                    x = value;
+                }
+                else if (key=="y"){
+                    y = value;
+                }
+                else if (key=="btns"){
+                    useButtons = value;
+                }
+                else if (key=="zoom"){
+                    zoom = value;
+                }
+            });
+
+
+            if (useButtons == "false"){
+                $("#shareButton").hide();
+                $("#submitButton").hide();
+                $("#routeButton").hide();
+            }
+
+            //make sure both x and y have values
+            if (!!x && !!y){
+                pt = new Point([x,y]);
+                map.centerAndZoom(pt,zoom);
+            }
+
+            
+        }
     }
 });}
 
