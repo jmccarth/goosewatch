@@ -30,14 +30,19 @@ html, body, .goose {
 	display:table-cell;
 	vertical-align:middle;
 	height:100%;
-	padding:0 1.25%;
+	padding:0 10px;
 }
 
 .nopad {
 	padding:0 !important;
 }
 
+.goose .etiquette {
+	height:100%;
+}
+
 @media all and (max-width:1024px) {
+
 	.cell.left, .cell.right {
 		width:25%;
 	}
@@ -47,6 +52,7 @@ html, body, .goose {
 }
 
 @media all and (min-width:1025px) {
+
 	.cell.left, .cell.right {
 		width:15%;
 	}
@@ -143,22 +149,12 @@ html, body, .goose {
 
 .goose .map .btns {
 	position:absolute;
-	right:15px;
-	top:15px;
 	width:25%;
 	min-width:8em;
 	max-width:200px;
 	z-index:2;
-}
-
-.goose .map .sharebtn {
-    position:absolute;
-	right:15px;
-	bottom:50px;
-	width:25%;
-	min-width:8em;
-	max-width:200px;
-	z-index:3;
+	top:10px;
+	right:10px;
 }
 
 .goose .btn-primary {
@@ -169,21 +165,36 @@ html, body, .goose {
 .goose .carousel {
 	width:100%;
 	height:100%;
-	display:table;
 	overflow:hidden;
 }
 
 .goose .carousel .carousel-inner {
-	display:table-cell;
-	vertical-align:middle;
 	overflow:hidden;
+	width:100%;
+	height:100%;
 }
 
 .goose .carousel .next, .goose .carousel .prev {
 }
 
 .goose .carousel .item {
+	overflow:hidden;
+	width:100%;
+	height:100%;
+}
+
+.goose .carousel .item .item-inner {
+	display:table;
+	width:100%;
+	height:100%;
+}
+
+.goose .carousel .item .item-inner div {
+	display:table-cell;
 	padding:0 7%;
+	width:100%;
+	height:100%;
+	vertical-align:middle;
 }
 
 .goose .carousel-control {
