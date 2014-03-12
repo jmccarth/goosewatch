@@ -13,6 +13,7 @@
 		<!-- Bootstrap CSS -->
 		<link href="css/bootstrap.min.css" rel="stylesheet">
 		<link href="css/goose.css" rel="stylesheet">
+        <link href="css/share.css" rel="stylesheet">
 		<!--<link href="css/bootstrap-theme.min.css" rel="stylesheet">-->
 		<!-- FontAwesome CSS -->
 		<link rel="stylesheet" href="font-awesome-4.0.3/css/font-awesome.min.css">
@@ -350,13 +351,36 @@
 						<h4 class="modal-title">Share</h4>
 					  </div>
 					  <div class="modal-body">
-                          <h4>Help us spread the word about GooseWatch '14 on Twitter and Facebook</h4>
-                          <!-- Twitter widget -->
-						<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://ow.ly/umXgV" data-text="They're back! Give our geese friends & nests some extra space this spring. Check out the #UWaterloo #goosewatch14 map" data-size="small">Tweet</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-                          <br />
-                          <!-- Facebook widget -->
-                         <div class="fb-share-button" data-href="http://ow.ly/umXgV" data-type="button_count"></div>
+                          <h4>Help us spread the word about GooseWatch '14</h4>
+                          <!-- Share buttons come from here: http://ostr.io/code/html-social-like-share-buttons-no-javascript.html -->
+                          <div class="btn-group">
+  <button
+    class="btn btn-default disabled"
+  >
+    Share:
+  </button>
+
+  <a
+    class="btn btn-default"
+    target="_blank"
+    title="On Facebook"
+    href="http://www.facebook.com/sharer.php?u=http://ow.ly/umXgV"
+  >
+    <i class="fa fa-facebook fa-lg fb"></i>
+  </a>
+
+  <a
+    class="btn btn-default"
+    target="_blank"
+    title="On Twitter"
+    href="http://twitter.com/share?url=http://ow.ly/umXgV&text=They%27re+back!+Give+our+geese+friends+%26+nests+some+extra+space+this+spring.+Check+out+the+%23UWaterloo+%23goosewatch14+map"
+  >
+    <i class="fa fa-twitter fa-lg tw"></i>
+  </a>
+
+    <a class="btn btn-default" title="URL" onclick="generateShareURL()"><i class="fa fa-bookmark fa-lg"></i></a>
+  </div>
+                         
                       </div>
 					  <div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
