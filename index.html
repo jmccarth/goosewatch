@@ -4,7 +4,12 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>GooseWatch 2014</title>
+        <meta property="og:title" content="Goose Watch '14" />
+        <meta property="og:url" content="http://goose-watch.uwaterloo.ca/" />
+        <meta property="og:description" content="They're back! Give our geese friends & nests some extra space this spring. Check out the #UWaterloo #goosewatch14 map" />
+        <meta property="og:image" content="img/GooseMapLogo.svg" />
+        <meta property="og:site_name" content="Goose Watch '14" />
+		<title>Goose Watch '14</title>
 
 		<!-- Bootstrap CSS -->
 		<link href="css/bootstrap.min.css" rel="stylesheet">
@@ -28,6 +33,16 @@
 	</head>
 
 	<body class="goose">
+        
+        <!-- Facebook stuff -->
+        <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
 		<div class="bar topbar">
 			<div class="split-container">
@@ -54,7 +69,7 @@
 			<div class="btns">
 				<a id="submitButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#addLocationModal">Submit a Nest</a>
 				<a id="routeButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#findRouteModal">Find a Route</a>
-				<a id="shareButton" class="btn btn-primary btn-block" onclick="generateShareURL()" href="#">Share</i></a>
+				<a id="shareButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#shareModal">Share</i></a>
 			</div>
 		</div>
 
@@ -174,27 +189,24 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#submitToTwitterModal" data-dismiss="modal" id="submitNest" disabled=true onclick="saveFeature()">Submit</button>
+						<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#postSubmissionModal" data-dismiss="modal" id="submitNest" disabled=true onclick="saveFeature()">Submit</button>
 					</div>
 				</div>
 			</div>
 		</div>
 		
-		<!-- Modal for also submitting to Twitter -->
-		<div class="modal fade" id="submitToTwitterModal" tabindex="-1" role="dialog" aria-labelledby="submitToTwitterLabel" aria-hidden="true">
+		<!-- Post-Submit Modal -->
+		<div class="modal fade" id="postSubmissionModal" tabindex="-1" role="dialog" aria-labelledby="postSubmissionLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4 class="modal-title" id="findRouteLabel">Thanks for your submission to Goosewatch 2014!</h4>
+						<h4 class="modal-title" id="findRouteLabel">Thanks for your submission to Goose Watch '14!</h4>
 					</div>
 					<div class="modal-body">
 						<p>
-							Your submitted location will be reviewed before being placed on the map. Use the button below if you want to share your submission on Twitter.
+							Your submitted location will be reviewed before being placed on the map.
 						</p>
-						<!-- Twitter widget -->
-						<a href="https://twitter.com/intent/tweet?button_hashtag=goosewatch2014&text=I%20just%20submitted%20a%20goose%20nest%20location" class="twitter-hashtag-button" data-size="large">Tweet #goosewatch2014</a>
-						<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>	
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -324,6 +336,30 @@
 
 					  <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal" data-toggle="modal" data-target="#newPhotoModal">Submit New Photo</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					  </div>
+				</div>
+			</div>
+		</div>
+    
+        <!-- SHARE MODAL -->
+        <div id="shareModal" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					  <div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">Share</h4>
+					  </div>
+					  <div class="modal-body">
+                          <h4>Help us spread the word about GooseWatch '14 on Twitter and Facebook</h4>
+                          <!-- Twitter widget -->
+						<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://ow.ly/umXgV" data-text="They're back! Give our geese friends & nests some extra space this spring. Check out the #UWaterloo #goosewatch14 map" data-size="small">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                          <br />
+                          <!-- Facebook widget -->
+                         <div class="fb-share-button" data-href="http://ow.ly/umXgV" data-type="button_count"></div>
+                      </div>
+					  <div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 					  </div>
 				</div>
