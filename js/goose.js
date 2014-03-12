@@ -8,7 +8,7 @@ var uwBldgsURL = "https://api.uwaterloo.ca/v2/buildings/list.json?key=***REMOVED
 var submittedPicsURL = "http://env-gis-srv1.uwaterloo.ca:6080/arcgis/rest/services/goosewatch14/gw14_public/FeatureServer/0";
 var gooseFL;
 var x, y;
-var offCampusBuildings = ["AAC","AAR","PHR","ARC","GA","HSC","WSS","180King"];
+var offCampusBuildings = ["AAC","AAR","PHR","ARC","GA","HSC","WSS","180King","RAC","RA2"];
 var buildings;
 var results;
 var stopSymbol, routeSymbol;
@@ -219,6 +219,7 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 		gooseFL.selectFeatures(selectAll,FeatureLayer.SELECTION_NEW);		
         
         centerMapURL();
+        map.addLayer(bufferGraphics);
 	}  
 });
 

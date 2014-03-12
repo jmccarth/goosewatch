@@ -181,6 +181,7 @@ function addStop(stop){
 		
 		//Reset buffer graphics to match the currently specified fear level
 		bufferGraphics.clear();
+        routeParams.polygonBarriers.features = [];
 		var fearval = $("#fearSelector").val();
 		dojo.forEach(nestBuffers[fearval].features,function(nestBuf,index){
 			routeParams.polygonBarriers.features.push(nestBuf);
