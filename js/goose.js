@@ -219,7 +219,7 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 		gooseFL.selectFeatures(selectAll,FeatureLayer.SELECTION_NEW);		
         
         centerMapURL();
-        map.addLayer(bufferGraphics);
+        
 	}  
 });
 
