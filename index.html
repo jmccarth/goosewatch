@@ -405,6 +405,11 @@
 
 			$(function() {
 				$('<style>body{}</style>').appendTo($body).remove();
+
+				//if ((window.ActiveXObject) && "ActiveXObject") {
+				if (!!navigator.userAgent.match(/Trident.*rv[ :]*11\./)) {
+					$body.addClass('ie11');
+				}
 			});
 
 		</script>
