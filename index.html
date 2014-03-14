@@ -69,7 +69,7 @@
 			<div class="btns">
 				<a id="submitButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#addLocationModal">Submit a Nest</a>
 				<a id="routeButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#findRouteModal">Find a Route</a>
-				<a id="shareButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#shareModal">Share</a>
+				<a id="shareButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#shareModal" onclick="generateShareURL()">Share</a>
 			</div>
 		</div>
 
@@ -353,7 +353,7 @@
 					<div class="modal-body">
 					  	<div class="row">
 					  		<div class="col-sm-12">
-	                          	<h4>Help us spread the word about GooseWatch '14</h4>
+	                          	<h4>Help us spread the word about Goose Watch '14</h4>
 	                          	<!-- Share buttons come from here: http://ostr.io/code/html-social-like-share-buttons-no-javascript.html -->
 		                        <div class="btn-group btn-group-justified">
 									<a class="btn btn-default" target="_blank" title="On Facebook" href="http://www.facebook.com/sharer.php?u=http://ow.ly/umXgV">
@@ -363,24 +363,20 @@
 									<a class="btn btn-default" target="_blank" title="On Twitter" href="http://twitter.com/share?url=http://ow.ly/umXgV&text=They%27re+back!+Give+our+geese+friends+%26+nests+some+extra+space+this+spring.+Check+out+the+%23UWaterloo+%23goosewatch14+map">
 										<i class="fa fa-twitter fa-lg tw"></i>
 									</a>
-
-	                                <a class="btn btn-default" title="URL" onclick="generateShareURL()">
-	                                    <i class="fa fa-link fa-lg"></i>
-	                                </a>
 		                       	</div>
                         	</div>
                         </div>
                         <br />
                         <div id="sharePanel" class="row">
                             <div class="col-sm-12">
-                            	<h4>Default URL</h4>
+                            	<h4>Link to Goose Watch '14</h4>
                                 <div class="input-group">
                                     <span class="input-group-addon">
                                         <i class="fa fa-link"></i>
                                     </span>
                                     <input type="text" class="form-control" value="http://goose-watch.uwaterloo.ca" />
                                 </div>
-                                <h4>URL with your current position and zoom level</h4>
+                                <h4>Link to Current Map View</h4>
                                 <div class="input-group">
                                     <span class="input-group-addon">
                                         <i class="fa fa-link"></i>
@@ -391,7 +387,7 @@
                         </div>
                     </div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal" onclick="$('#sharePanel').hide()">Close</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 					</div>
 				</div>
 			</div>
