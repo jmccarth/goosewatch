@@ -124,6 +124,12 @@ html, body, .goose {
 	/*max-height:90%;*/
 }
 
+.ie11 .bar img {
+	height:auto;
+}
+
+
+
 .goose .bar a:hover {
 	/*background:#555;*/
 	text-decoration:none;
