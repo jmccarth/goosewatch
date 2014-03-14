@@ -39,6 +39,8 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
         pauseEtiquetteCarousel();
     });
     
+    $('#sharePanel').hide()
+    
 	gsvc = new GeometryService(geometryServiceURL);
 
 	//Create nested feature set to hold nest buffers at three levels

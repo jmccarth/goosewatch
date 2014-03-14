@@ -378,12 +378,24 @@
     <i class="fa fa-twitter fa-lg tw"></i>
   </a>
 
-    <a class="btn btn-default" title="URL" onclick="generateShareURL()"><i class="fa fa-bookmark fa-lg"></i></a>
+    <a class="btn btn-default" title="URL" onclick="generateShareURL()"><i class="fa fa-link fa-lg"></i></a>
   </div>
-                         
+                          <div id="sharePanel" class="row">
+                              <div class="col-lg-12">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-link"></i>
+                                    </span>
+                                    <input id="shareURL" type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                          
+                          	
+                          
                       </div>
 					  <div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal" onclick="$('#sharePanel').hide()">Close</button>
 					  </div>
 				</div>
 			</div>
