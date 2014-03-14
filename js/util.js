@@ -89,6 +89,7 @@ require(["esri/geometry/webMercatorUtils"],function(webMercatorUtils){
     var y = geo_pt.y.toFixed(3);
     var zoom = map.getZoom();
     var shareURL = location.origin + "?x=" + x + "&y=" + y + "&zoom=" + zoom;
-    
-    alert(shareURL);
+    $("#shareURL")[0].value = shareURL;
+    //alert(shareURL);
+    $("#sharePanel").show();
 });}
