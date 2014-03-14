@@ -291,7 +291,7 @@
 				<div class="modal-content">
 					  <div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4 class="modal-title">Goose Nest</h4>
+						<h3 class="modal-title">Goose Nest</h3>
 					  </div>
 					  <div class="modal-body">
 					  	<h4 class="text-center" id="nestDescription"></h4>
@@ -346,48 +346,53 @@
         <div id="shareModal" class="modal fade">
 			<div class="modal-dialog">
 				<div class="modal-content">
-					  <div class="modal-header">
+					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4 class="modal-title">Share</h4>
-					  </div>
-					  <div class="modal-body">
-                          <h4>Help us spread the word about GooseWatch '14</h4>
-                          <!-- Share buttons come from here: http://ostr.io/code/html-social-like-share-buttons-no-javascript.html -->
-                          <div class="btn-group">
-                            <button class="btn btn-default disabled">
-                                Share:
-                            </button>
+						<h3 class="modal-title">Share</h3>
+					</div>
+					<div class="modal-body">
+					  	<div class="row">
+					  		<div class="col-sm-12">
+	                          	<h4>Help us spread the word about GooseWatch '14</h4>
+	                          	<!-- Share buttons come from here: http://ostr.io/code/html-social-like-share-buttons-no-javascript.html -->
+		                        <div class="btn-group btn-group-justified">
+									<a class="btn btn-default" target="_blank" title="On Facebook" href="http://www.facebook.com/sharer.php?u=http://ow.ly/umXgV">
+										<i class="fa fa-facebook fa-lg fb"></i>
+									</a>
 
-                              <a class="btn btn-default" target="_blank" title="On Facebook" href="http://www.facebook.com/sharer.php?u=http://ow.ly/umXgV">
-                                <i class="fa fa-facebook fa-lg fb"></i>
-                              </a>
+									<a class="btn btn-default" target="_blank" title="On Twitter" href="http://twitter.com/share?url=http://ow.ly/umXgV&text=They%27re+back!+Give+our+geese+friends+%26+nests+some+extra+space+this+spring.+Check+out+the+%23UWaterloo+%23goosewatch14+map">
+										<i class="fa fa-twitter fa-lg tw"></i>
+									</a>
 
-                              <a class="btn btn-default" target="_blank" title="On Twitter" href="http://twitter.com/share?url=http://ow.ly/umXgV&text=They%27re+back!+Give+our+geese+friends+%26+nests+some+extra+space+this+spring.+Check+out+the+%23UWaterloo+%23goosewatch14+map">
-                                <i class="fa fa-twitter fa-lg tw"></i>
-                              </a>
-
-                                <a class="btn btn-default" title="URL" onclick="generateShareURL()">
-                                    <i class="fa fa-link fa-lg"></i>
-                                </a>
+	                                <a class="btn btn-default" title="URL" onclick="generateShareURL()">
+	                                    <i class="fa fa-link fa-lg"></i>
+	                                </a>
+		                       	</div>
+                        	</div>
                         </div>
-                        
-                          <div id="sharePanel" class="row">
-                              <div class="col-lg-12">
+                        <br />
+                        <div id="sharePanel" class="row">
+                            <div class="col-sm-12">
+                            	<h4>Default URL</h4>
                                 <div class="input-group">
                                     <span class="input-group-addon">
                                         <i class="fa fa-link"></i>
                                     </span>
-                                    <input id="shareURL" type="text" class="form-control">
+                                    <input type="text" class="form-control" value="http://goose-watch.uwaterloo.ca" />
+                                </div>
+                                <h4>URL with your current position and zoom level</h4>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-link"></i>
+                                    </span>
+                                    <input id="shareURL" type="text" class="form-control" />
                                 </div>
                             </div>
                         </div>
-                          
-                          	
-                          
-                      </div>
-					  <div class="modal-footer">
+                    </div>
+					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal" onclick="$('#sharePanel').hide()">Close</button>
-					  </div>
+					</div>
 				</div>
 			</div>
 		</div>
