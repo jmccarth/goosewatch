@@ -158,8 +158,9 @@ function addStopFromDeviceLocation(location){
             addStop(currentDeviceLoc);
         }
         else{
-            alert("Your device is currently off campus. We cannot find a route for you.");
             routeParams.stops = new FeatureSet();
+            results.clear();
+            alert("Your device is reporting a location off campus so we cannot find a route for you. This happens if you're off campus, or on campus using a wired internet connection. Try picking your nearest building instead.");
         }
     });
 }
