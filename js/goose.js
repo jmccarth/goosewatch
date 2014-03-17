@@ -2,7 +2,7 @@
 var map;
 var gooseNestsURL = "http://env-gis-srv1.uwaterloo.ca:6080/arcgis/rest/services/goosewatch14/gw14_public/FeatureServer/1";
 var geometryServiceURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer";
-var routeTaskURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Campus/uw_route/NAServer/Route?token=oxSF0Agd5ZoDEqJX3b0hcn4im9yhLs-yeQbAgxTn7gfD20WSqbk9qYBpaZMqVwBb86GV79qfaAu_3zsawq3tpzBefVkbcK81hghgCggBWEI.";
+var routeTaskURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Campus/uw_route/NAServer/Route?token=keg4Ye44zx34yWP0UBO3R7HA3bNYeZBgr_twvdz-vSQMym4wmYTCzRrky9UTPhaQ50kPjNAhDJ28kMk9lRzKzQ..";
 var extentLayerURL = "https://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/UW_Buildings/FeatureServer/0";
 var uwBldgsURL = "https://api.uwaterloo.ca/v2/buildings/list.json?key=cb63602dd1fd2a14332405f8613b68ed&output=json&callback=populateBuildings&jsonp=?";
 var submittedPicsURL = "http://env-gis-srv1.uwaterloo.ca:6080/arcgis/rest/services/goosewatch14/gw14_public/FeatureServer/0";
@@ -203,7 +203,7 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 	  
 		//Set up routing symbology
         stopSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 15, new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new dojo.Color([0,0,0]), 1), new dojo.Color([255,0,0,0.25]));
-		routeSymbol = new SimpleLineSymbol().setColor(new dojo.Color([0,255,0,0.75])).setWidth(4);
+		routeSymbol = new SimpleLineSymbol().setColor(new dojo.Color([21,35,115,0.75])).setWidth(4);
 
 		
 		// Get building data from uWaterloo API
