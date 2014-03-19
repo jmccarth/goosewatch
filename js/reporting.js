@@ -72,7 +72,7 @@ function populateLocationFromDevice(location){
         }
         else{
             if(!alerted){
-                alert("Your device is reporting a location that is not on the UW campus."); 
+                alert("Your device is reporting a location that is not on the UW campus. You may only submit nest locations on campus."); 
                 alerted = true;
             }
             $("#mapMarker")[0].style.color = "red";
@@ -87,19 +87,26 @@ function populateLocationFromDevice(location){
 	Set the coordinates text box to show the point and disable it. 
 */
 function populateLocationFromClick(pt){
+require(["esri/geometry/webMercatorUtils"],function(webMercatorUtils){
 	x = pt.x;
 	y = pt.y;
 	var coords = $("#coords");
 	var loc = x + "," + y;
-	coords.val(loc);
-	$("#coords")[0].disabled = true;
-	$("#mapMarker")[0].style.color = "green";
-	$("#addLocationModal").modal('show');
-	//Disable point selection mode so user can interact with the map again
-	disablePointSelection();
-	
-	//Enable submission
-	$("#submitNest")[0].disabled = false;
+    if (extentLayer.fullExtent.contains(webMercatorUtils.geographicToWebMercator(pt))){
+        coords.val(loc);
+        $("#coords")[0].disabled = true;
+        $("#mapMarker")[0].style.color = "green";
+        $("#addLocationModal").modal('show');
+        //Disable point selection mode so user can interact with the map again
+        disablePointSelection();
+
+        //Enable submission
+        $("#submitNest")[0].disabled = false;
+    }
+    else{
+        alert("That point is not on the UWaterloo campus. Please try another point.");
+    }
+});
 }
 
 /**
