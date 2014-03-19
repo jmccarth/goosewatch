@@ -1,11 +1,11 @@
 //Globals
 var map;
-var gooseNestsURL = "http://env-gis-srv1.uwaterloo.ca:6080/arcgis/rest/services/goosewatch14/gw14_public/FeatureServer/1";
+var gooseNestsURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/goosewatch/gw14_public/FeatureServer/1?token=xIgRW1Co78BHbkTrLw7MTtzQo32uQPO8RL1Q7ccSa4t9dTFiy9TtuMvHXvq4CjEziqGv1Fngs_SaOwcbmFPNfpkY8j5-UlpIIgnE_844mzU.";
 var geometryServiceURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer";
 var routeTaskURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Campus/uw_route/NAServer/Route?token=keg4Ye44zx34yWP0UBO3R7HA3bNYeZBgr_twvdz-vSQMym4wmYTCzRrky9UTPhaQ50kPjNAhDJ28kMk9lRzKzQ..";
 var extentLayerURL = "https://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/UW_Buildings/FeatureServer/0";
 var uwBldgsURL = "https://api.uwaterloo.ca/v2/buildings/list.json?key=***REMOVED***&output=json&callback=populateBuildings&jsonp=?";
-var submittedPicsURL = "http://env-gis-srv1.uwaterloo.ca:6080/arcgis/rest/services/goosewatch14/gw14_public/FeatureServer/0";
+var submittedPicsURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/goosewatch/gw14_public/FeatureServer/0?token=xIgRW1Co78BHbkTrLw7MTtzQo32uQPO8RL1Q7ccSa4t9dTFiy9TtuMvHXvq4CjEziqGv1Fngs_SaOwcbmFPNfpkY8j5-UlpIIgnE_844mzU.";
 var gooseFL;
 var x, y;
 var offCampusBuildings = ["AAC","AAR","PHR","ARC","GA","HSC","WSS","180King","RAC","RA2"];
