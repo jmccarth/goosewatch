@@ -183,10 +183,22 @@ html, body, .goose {
 .goose .carousel .next, .goose .carousel .prev {
 }
 
+.goose #carouselSlides {
+	width:100%;
+	height:480px;
+}
+
 .goose .carousel .item {
 	overflow:hidden;
 	width:100%;
 	height:100%;
+	text-align:center;
+}
+
+.goose .carousel .item img {
+	display:inline;
+	max-width:100%;
+	max-height:100%;
 }
 
 .goose .carousel .item .item-inner {
