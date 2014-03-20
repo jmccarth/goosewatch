@@ -71,6 +71,7 @@
 				<a id="routeButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#findRouteModal">Find a Route</a>
 				<a id="shareButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#shareModal" onclick="generateShareURL()">Share</a>
 			</div>
+            <a id="moreInfo" href="#" data-toggle="modal" data-target="#infoModal"><i class="fa fa-question-circle"></i></a>
 		</div>
 
 		<div class="bar bottombar">
@@ -392,6 +393,32 @@
 				</div>
 			</div>
 		</div>
+        
+        
+        <!-- More Info Modal -->
+		<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h3 class="modal-title" id="findRouteLabel">Goose Watch 14 Information</h3>
+					</div>
+					<div class="modal-body">
+                        <ul>
+                            <li>Goose Watch 14 is a collaboration between Mapping, Analysis, and Design and the Student Success Office.</li>
+                            <li>The Goose Watch source code is available <a href="https://github.com/jmccarth/goosewatch">on GitHub</a></li>
+                            <li>This project uses data from the <a href="http://uwaterloo.ca/open-data">uWaterloo Open Data API</a>. Approved nest submissions have been made available through the API.</li>
+                            <li>If you have comments, questions, or bug reports, contact James McCarthy via <a href="mailto:jmccarth@uwaterloo.ca">email</a> or <a href="http://twitter.com/JD_McCarthy">Twitter</a>. You can also log an issue <a href="https://github.com/jmccarth/goosewatch">on GitHub</a>.</li>
+                        </ul>
+                        
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+        
 		
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<script src="https://code.jquery.com/jquery.js"></script>
