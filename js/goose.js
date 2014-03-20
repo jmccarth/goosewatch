@@ -1,11 +1,11 @@
 //Globals
 var map;
-var gooseNestsURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/goosewatch/gw14_public/FeatureServer/1?token=xIgRW1Co78BHbkTrLw7MTtzQo32uQPO8RL1Q7ccSa4t9dTFiy9TtuMvHXvq4CjEziqGv1Fngs_SaOwcbmFPNfpkY8j5-UlpIIgnE_844mzU.";
+var gooseNestsURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/goosewatch/gw14_public/FeatureServer/1?token=";
 var geometryServiceURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer";
-var routeTaskURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Campus/uw_route/NAServer/Route?token=keg4Ye44zx34yWP0UBO3R7HA3bNYeZBgr_twvdz-vSQMym4wmYTCzRrky9UTPhaQ50kPjNAhDJ28kMk9lRzKzQ..";
+var routeTaskURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Campus/uw_route/NAServer/Route?token=";
 var extentLayerURL = "https://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/UW_Buildings/FeatureServer/0";
 var uwBldgsURL = "https://api.uwaterloo.ca/v2/buildings/list.json?key=cb63602dd1fd2a14332405f8613b68ed&output=json&callback=populateBuildings&jsonp=?";
-var submittedPicsURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/goosewatch/gw14_public/FeatureServer/0?token=xIgRW1Co78BHbkTrLw7MTtzQo32uQPO8RL1Q7ccSa4t9dTFiy9TtuMvHXvq4CjEziqGv1Fngs_SaOwcbmFPNfpkY8j5-UlpIIgnE_844mzU.";
+var submittedPicsURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/goosewatch/gw14_public/FeatureServer/0?token=";
 var gooseFL;
 var x, y;
 var offCampusBuildings = ["AAC","AAR","PHR","ARC","GA","HSC","WSS","180King","RAC","RA2"];
@@ -29,6 +29,26 @@ var submittedPicsFL;
 
 require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","esri/geometry/webMercatorUtils","esri/dijit/PopupTemplate","esri/dijit/PopupMobile","esri/renderers/SimpleRenderer","esri/renderers/ScaleDependentRenderer","esri/symbols/PictureMarkerSymbol","dojo/dom-construct","dojo/domReady!"], function(Map,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query,webMercatorUtils,PopupTemplate,PopupMobile,SimpleRenderer,ScaleDependentRenderer,PictureMarkerSymbol,domConstruct){
 
+    //Handle tokens
+    var routeToken;
+    var gwToken;
+    $.get('tokens.txt',function(data){
+        var the_url = document.URL;
+        var lines = data.split("\n");
+        $.each(lines,function(i,v){
+            var tokens = v.split(",");
+            if (document.URL.indexOf(tokens[0]) > -1){
+                routeToken = tokens[1];
+                gwToken = tokens[2];
+                gooseNestsURL = gooseNestsURL + gwToken;
+                submittedPicsURL = submittedPicsURL + gwToken;
+                routeTaskURL = routeTaskURL + routeToken;
+            }    
+        });
+    });
+    
+    
+    
     $('#carousel').carousel();
     
     var $modals = $('.modal')
