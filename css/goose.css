@@ -184,8 +184,7 @@ html, body, .goose {
 }
 
 .goose #carouselSlides {
-	width:100%;
-	height:480px;
+	width:400px;
 }
 
 .goose .carousel .item {
