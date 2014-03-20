@@ -6,8 +6,12 @@
 */
 function locateUser(){
 	if(navigator.geolocation){  
-		navigator.geolocation.getCurrentPosition(populateLocationFromDevice);
-		watchId = navigator.geolocation.watchPosition(populateLocationFromDevice);
+		navigator.geolocation.getCurrentPosition(populateLocationFromDevice,function(error){
+            alert("Unable to find your position:" + error.message);
+        },{enableHighAccuracy:true, timeout:30000});
+		watchId = navigator.geolocation.watchPosition(populateLocationFromDevice,function(error){
+            console.log("Unable to find your position:" + error.message);
+        },{enableHighAccuracy:true, timeout:30000});
 	}
 	else{
 		$("#locationLink")[0].style.color = "red";

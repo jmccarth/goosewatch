@@ -89,11 +89,12 @@ function makeNestBuffers() {
 	Validates building selections on routing modal and if they are valid adds them as stops to the network.
 */
 function validateAndAddStops(){
+require(["esri/tasks/FeatureSet"],function(FeatureSet){
 	//Clear old routes
 	results.clear();
 	
 	//Clear old stops
-	routeParams.stops = new esri.tasks.FeatureSet();
+	routeParams.stops = new FeatureSet();
 	
 	//What are the start and end buildings?
 	var buildingA = dojo.byId("buildingSelectorA").value;
@@ -110,7 +111,10 @@ function validateAndAddStops(){
         useDeviceLoc = true;
         //locateUser();
         if(navigator.geolocation){  
-            navigator.geolocation.getCurrentPosition(addStopFromDeviceLocation);
+            navigator.geolocation.getCurrentPosition(addStopFromDeviceLocation,function(error){
+                alert("Unable to find your position:" + error.message);
+                routeParams.stops = new FeatureSet();
+            },{enableHighAccuracy:true, timeout:30000});
         }
         else{
             alert("Browser doesn't support Geolocation. Visit http://caniuse.com to discover browser support for the Geolocation API.");
@@ -142,6 +146,7 @@ function validateAndAddStops(){
             }
         });
 	}
+});
 }
 
 function addStopFromDeviceLocation(location){
@@ -160,7 +165,7 @@ function addStopFromDeviceLocation(location){
         else{
             routeParams.stops = new FeatureSet();
             results.clear();
-            alert("Your device is reporting a location off campus so we cannot find a route for you. This happens if you're off campus, or on campus using a wired internet connection. Try picking your nearest building instead.");
+            alert("Your device is reporting a location (" + x + "," + y + ") off campus so we cannot find a route for you. This happens if you're off campus, or on campus using a wired internet connection. Try picking your nearest building instead.");
         }
     });
 }

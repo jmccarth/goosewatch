@@ -72,6 +72,7 @@ function populateLocationFromDevice(location){
         }
         else{
             if(!alerted){
+                coords.val(loc);
                 alert("Your device is reporting a location that is not on the UW campus. You may only submit nest locations on campus."); 
                 alerted = true;
             }
