@@ -180,7 +180,7 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
                             slide.setAttribute('class',attvalue);
                             var el = document.createElement('img');
                             el.setAttribute('src', infos[i].url);
-                            el.setAttribute('style','width:90%');
+                            //el.setAttribute('style','width:90%');
                             slide.appendChild(el);
                             $("#carouselSlides").append(slide);
                         }
