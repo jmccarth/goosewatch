@@ -34,7 +34,7 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
     var gwToken;
     $.get('tokens.txt',function(data){
         var the_url = document.URL;
-        var lines = data.split("\n");
+        var lines = data.split("\r\n");
         $.each(lines,function(i,v){
             var tokens = v.split(",");
             if (document.URL.indexOf(tokens[0]) > -1){
