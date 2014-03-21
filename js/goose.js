@@ -2,7 +2,7 @@
 var map;
 var gooseNestsURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/goosewatch/gw14_public/FeatureServer/1?token=";
 var geometryServiceURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer";
-var routeTaskURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Campus/uw_route/NAServer/Route?token=";
+var routeTaskURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/goosewatch/gw14_route/NAServer/Route?token=";
 var extentLayerURL = "https://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/UW_Buildings/FeatureServer/0";
 var uwBldgsURL = "https://api.uwaterloo.ca/v2/buildings/list.json?key=***REMOVED***&output=json&callback=populateBuildings&jsonp=?";
 var submittedPicsURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/goosewatch/gw14_public/FeatureServer/0?token=";
@@ -42,7 +42,7 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
                 gwToken = tokens[2];
                 gooseNestsURL = gooseNestsURL + gwToken;
                 submittedPicsURL = submittedPicsURL + gwToken;
-                routeTaskURL = routeTaskURL + routeToken;
+                routeTaskURL = routeTaskURL + gwToken;
             }    
         });
     });
