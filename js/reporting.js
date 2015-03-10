@@ -21,12 +21,12 @@ function saveFeature(){
 
 		//Create a graphic from that point and add it to the feature layer
 		var g = new Graphic(p,null,{"description":locDescription,"submitter":submitter,"twitter":twitterSub,"submitdate":dateString,"status":0,"email":emailAddr});
-		gooseFL.applyEdits([g],null,null);
+		gooseEditFL.applyEdits([g],null,null);
 	});
 }
 
 function attachPhoto(ftrEditResult){
-	gooseFL.addAttachment(ftrEditResult.adds[0].objectId,document.getElementById("addNestForm"));
+	gooseEditFL.addAttachment(ftrEditResult.adds[0].objectId,document.getElementById("addNestForm"));
 }
 
 function addNewPhoto(){
