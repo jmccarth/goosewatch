@@ -1,26 +1,26 @@
 /**
 	saveFeature()
-	
-	Takes the values on the nest submission form and supplements them with the global x and y set elsewhere 
+
+	Takes the values on the nest submission form and supplements them with the global x and y set elsewhere
 	to create a new point in the goose nests feature layer.
 */
 function saveFeature(){
 	require(["esri/graphic","esri/geometry/Point","esri/geometry/webMercatorUtils","esri/SpatialReference","esri/layers/FeatureLayer"],function(Graphic,Point,webMercatorUtils,SpatialReference,FeatureLayer){
-	
+
 		//Get form elements to populate attributes
 		var locDescription = $("#locDesc").val();
 		var submitter = $("#submitter").val();
 		var twitterSub = $("#twitterHandle").val();
-        var emailAddr = $("#emailAddress").val();
-		
+  	var emailAddr = $("#emailAddress").val();
+
 		var currentDate = new Date();
-        var dateString = ((currentDate.getMonth() + 1) + "/" + currentDate.getDate() + "/" + currentDate.getFullYear());
-		
+    var dateString = ((currentDate.getMonth() + 1) + "/" + currentDate.getDate() + "/" + currentDate.getFullYear());
+
 		//Convert global x and y (which are in lat/long) to Web Mercator
 		var p = webMercatorUtils.geographicToWebMercator(new Point(x,y,new SpatialReference({wkid:4326})));
-		
+
 		//Create a graphic from that point and add it to the feature layer
-		var g = new Graphic(p,null,{"Description":locDescription,"Submitter":submitter,"Twitter":twitterSub,"SubmitDate":dateString,"Status":0,"email":emailAddr});
+		var g = new Graphic(p,null,{"description":locDescription,"submitter":submitter,"twitter":twitterSub,"submitdate":dateString,"status":0,"email":emailAddr});
 		gooseFL.applyEdits([g],null,null);
 	});
 }
@@ -33,12 +33,12 @@ function addNewPhoto(){
     require(["esri/graphic","esri/geometry/Point","esri/geometry/webMercatorUtils","esri/SpatialReference"],function(Graphic,Point,webMercatorUtils,SpatialReference){
         var currentDate = new Date();
         var dateString = ((currentDate.getMonth() + 1) + "/" + currentDate.getDate() + "/" + currentDate.getFullYear());
-        
+
         //Convert global x and y (which are in lat/long) to Web Mercator
-		var p = new Point($("#nestX")[0].value,$("#nestY")[0].value,new SpatialReference({wkid:102100}));
+				var p = new Point($("#nestX")[0].value,$("#nestY")[0].value,new SpatialReference({wkid:4326}));
 
         var g = new Graphic(p,null,{"status":"0","nestid":$("#nestOID")[0].value,"submitdate":dateString});
-        submittedPicsFL.applyEdits([g],null,null); 
+        submittedPicsFL.applyEdits([g],null,null);
     });
 }
 
@@ -48,7 +48,7 @@ function attachNewPhoto(ftrEditResult){
 
 /**
 	populateLocationFromDevice()
-	
+
 	Given a position from HTML geolocation this function populates the coords text box,
 	disables editing on it, and notifies the user by changing the button's colour to green.
 */
@@ -59,7 +59,7 @@ function populateLocationFromDevice(location){
         x = location.coords.longitude;
         y = location.coords.latitude;
         loc = x + "," + y;
-        
+
         var pt = new Point(x, y, new SpatialReference({ wkid: 4326 }));
         currentDeviceLoc = new Graphic(pt);
         if (extentLayer.fullExtent.contains(webMercatorUtils.geographicToWebMercator(currentDeviceLoc.geometry))){
@@ -74,7 +74,7 @@ function populateLocationFromDevice(location){
         else{
             if(!alerted){
                 coords.val(loc);
-                alert("Your device is reporting a location that is not on the UW campus. You may only submit nest locations on campus."); 
+                alert("Your device is reporting a location that is not on the UW campus. You may only submit nest locations on campus.");
                 alerted = true;
             }
             $("#mapMarker")[0].style.color = "red";
@@ -84,9 +84,9 @@ function populateLocationFromDevice(location){
 
 /**
 	populateLocationFromClick()
-	
+
 	Given a point object set the global x and y to the x and y coordinates of the point.
-	Set the coordinates text box to show the point and disable it. 
+	Set the coordinates text box to show the point and disable it.
 */
 function populateLocationFromClick(pt){
 require(["esri/geometry/webMercatorUtils"],function(webMercatorUtils){
@@ -113,7 +113,7 @@ require(["esri/geometry/webMercatorUtils"],function(webMercatorUtils){
 
 /**
 	enablePointSelection()
-	
+
 	Sets a flag that enables the user to click on a point on the map and have the resulting x,y coordinate
 	used to report a new nest location. This is checked in the map's click handler.
 */
@@ -123,7 +123,7 @@ function enablePointSelection(){
 
 /**
 	disablePointSelection()
-	
+
 	Sets a flag that disables the user's ability to click on the map to create a nest location.
 	This is checked in the map's click handler.
 */
