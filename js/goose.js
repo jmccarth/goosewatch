@@ -1,11 +1,12 @@
 //Globals
 var map;
-var gooseNestsURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/goosewatch/gw14_public/FeatureServer/1?token=";
-var geometryServiceURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/Utilities/Geometry/GeometryServer";
-var routeTaskURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/goosewatch/gw14_route/NAServer/Route?token=";
+var gooseNestsURL = "http://services2.arcgis.com/rEyyACsbHLGwNRQS/arcgis/rest/services/gw_submissions/FeatureServer/0";
+var geometryServiceURL = "http://env-gisdev1.uwaterloo.ca:6080/arcgis/rest/services/Utilities/Geometry/GeometryServer";
+var routeTaskURL = "http://env-gisdev1.uwaterloo.ca:6080/arcgis/rest/services/Campus/uw_route/NAServer/Route"; //TODO: Token, publish somewhere permanent
 var extentLayerURL = "https://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/UW_Buildings/FeatureServer/0";
 var uwBldgsURL = "https://api.uwaterloo.ca/v2/buildings/list.json?key=cb63602dd1fd2a14332405f8613b68ed&output=json&callback=populateBuildings&jsonp=?";
-var submittedPicsURL = "http://env-gisdev.uwaterloo.ca/arcgis/rest/services/goosewatch/gw14_public/FeatureServer/0?token=";
+// var submittedPicsURL = "http://env-gisdev1.uwaterloo.ca:6080/arcgis/rest/services/goosewatch/gw14_public/FeatureServer/0"; //TODO: Token
+var submittedPicsURL = "http://services2.arcgis.com/rEyyACsbHLGwNRQS/arcgis/rest/services/GooseWatch_Picture_Submissions/FeatureServer/0"; //TODO: Token
 var gooseFL;
 var x, y;
 var offCampusBuildings = ["AAC","AAR","PHR","ARC","GA","HSC","WSS","180King","RAC","RA2"];
@@ -40,17 +41,17 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
             if (document.URL.indexOf(tokens[0]) > -1){
                 routeToken = tokens[1];
                 gwToken = tokens[2];
-                gooseNestsURL = gooseNestsURL + gwToken;
-                submittedPicsURL = submittedPicsURL + gwToken;
-                routeTaskURL = routeTaskURL + gwToken;
-            }    
+                //gooseNestsURL = gooseNestsURL + gwToken;
+                //submittedPicsURL = submittedPicsURL + gwToken;
+                //routeTaskURL = routeTaskURL + gwToken;
+            }
         });
     });
-    
-    
-    
+
+
+
     $('#carousel').carousel();
-    
+
     var $modals = $('.modal')
     $modals.on('hidden.bs.modal',function(e){
         unPauseEtiquetteCarousel();
@@ -58,9 +59,9 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
     $modals.on('shown.bs.modal',function(e){
         pauseEtiquetteCarousel();
     });
-    
+
     $('#sharePanel').hide()
-    
+
 	gsvc = new GeometryService(geometryServiceURL);
 
 	//Create nested feature set to hold nest buffers at three levels
@@ -68,7 +69,7 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 	nestBuffers.push(new esri.tasks.FeatureSet());
 	nestBuffers.push(new esri.tasks.FeatureSet());
 	nestBuffers.push(new esri.tasks.FeatureSet());
-	
+
 	//Create the map
 	map = new Map("mapDiv",{
 		basemap: "topo",
@@ -77,7 +78,7 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
         minZoom: 15,
         maxZoom: 19
 	});
-	
+
 	//Create a new lat/long point when the user clicks on the map (if in add point mode)
 	map.on("click",function(ev){
 		if(addPointMode){
@@ -86,33 +87,33 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 			populateLocationFromClick(llPt);
 		}
 	});
-    
+
     //Modify the data attribution text when the map changes
     map.on("extent-change",function(ev){
         $(".esriAttributionLastItem").text(routeAttribution +  $(".esriAttributionLastItem").text());
     });
-	
-	
+
+
 	//Initialize map contents once map has loaded
 	map.on("load", initLayers);
-	
-	
+
+
 
 	/**
 		initLayers()
-		
+
 		Initializes all the layers after the map has loaded
 	*/
 	function initLayers(){
 		//get reference to submitted pictures
         submittedPicsFL = new FeatureLayer(submittedPicsURL);
-        
+
         //Goose nest symbol
         var smallNestSymbol = new PictureMarkerSymbol("img/NestLocationsGoose.svg",30,30);
         var largeNestSymbol = new PictureMarkerSymbol("img/NestLocationsGoose.svg",50,50);
         var smallNestRenderer = new SimpleRenderer(smallNestSymbol);
         var largeNestRenderer = new SimpleRenderer(largeNestSymbol);
-        
+
         var rendererInfos = [
             {
                 "renderer": smallNestRenderer,
@@ -125,7 +126,7 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
                 "maxZoom":19
             }
         ];
-        
+
         var scaleDependentRenderer = new ScaleDependentRenderer();
         scaleDependentRenderer.setRendererInfos(rendererInfos);
 		//Create the goose nest feature layer
@@ -135,45 +136,45 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 			outFields: ["*"]
 		});
         gooseFL.setRenderer(scaleDependentRenderer);
-		
+
 		//When the features are selected create the nest buffers
 		gooseFL.on("selection-complete",makeNestBuffers);
 		//Add attachments if they exist once a new feature is created
 		gooseFL.on("edits-complete",attachPhoto);
         //Add attachments when a new photo is submitted
         submittedPicsFL.on("edits-complete",attachNewPhoto);
-        
+
         //Create a new feature layer to hold an extent based on UW building footprints
         extentLayer = new FeatureLayer(extentLayerURL);
-		
+
 		//This is based on the forum post here: http://forums.arcgis.com/threads/77989-Display-Image-Attachments-in-Popup
 		gooseFL.on("click",function(e){
             pauseEtiquetteCarousel();
 			var objectId, el;
 			objectId = e.graphic.attributes[gooseFL.objectIdField];
 			gooseFL.queryAttachmentInfos(objectId, function (infos) {
-				
-				
+
+
 				var d = new Date(e.graphic.attributes.submitdate);
-				
+
 				$("#nestDate")[0].innerHTML = d.toLocaleDateString();
 				$("#nestDescription")[0].innerHTML = e.graphic.attributes.description;
 				$("#nestSubmitter")[0].innerHTML = e.graphic.attributes.submitter;
 				$("#nestTwitter")[0].innerHTML = e.graphic.attributes.twitter;
-                $("#nestOID")[0].value = e.graphic.attributes.objectid;
+                $("#nestOID")[0].value = e.graphic.attributes.OBJECTID;
                 $("#nestX")[0].value = e.graphic.geometry.x;
                 $("#nestY")[0].value = e.graphic.geometry.y;
 
-                
+
                 $("#nestImagePlaceholder").hide();
-				
+
 				if (!!infos[0]) {
                      if(!!$("#carouselSlides").children()){
                         $("#carouselSlides").children().remove();
                     }
 
                         $("#nestImagePlaceholder").show();
-                    
+
                         for (var i=0; i < infos.length; i++){
                             var slide = document.createElement('div');
                             var attvalue = i==0 ? "item active" : "item";
@@ -196,18 +197,18 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
                         }
                     }
 					$("#nestModal").modal("show");
-				
+
 			});
 		});
-		
+
 		map.addLayer(gooseFL);
-        
+
 
 
 		//Create graphics layers to hold buffer graphics and route results
 		results = new GraphicsLayer();
 		bufferGraphics = new GraphicsLayer();
-	  
+
 		//Set up routing parameters
 		routeTask = new RouteTask(routeTaskURL);
 		routeParams = new RouteParameters();
@@ -216,33 +217,43 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 		routeParams.returnPolygonBarriers = true;
 		routeParams.outSpatialReference = {"wkid":102100};
 		routeParams.doNotLocateOnRestrictedElements = true;
-		
+
 		//Routing events
 		routeTask.on("solve-complete",showRoute);
 		routeTask.on("error",routeErrorHandler);
-	  
+
 		//Set up routing symbology
         stopSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 15, new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new dojo.Color([0,0,0]), 1), new dojo.Color([255,0,0,0.25]));
 		routeSymbol = new SimpleLineSymbol().setColor(new dojo.Color([21,35,115,0.75])).setWidth(4);
 
-		
+
 		// Get building data from uWaterloo API
-		dojo.io.script.get({
-			url: uwBldgsURL
-		});
-		
+
+    var uw_api_key = "cb63602dd1fd2a14332405f8613b68ed"; //TODO: Get this from text file
+    var bldg_url = "http://api.uwaterloo.ca/v2/buildings/list.json?key=" + uw_api_key;
+    $.ajax({
+      dataType: "json",
+      url: bldg_url,
+      success: function(data){
+        populateBuildings(data);
+      },
+      crossDomain: true,
+      xhr: window.IEXMLHttpRequest || jQuery.ajaxSettings.xhr
+    });
+
+
 		//Add graphics layers to map
 		map.addLayer(results);
 		//map.addLayer(bufferGraphics,0);
-		
+
 		//Select all nests to get them on the map
 		var selectAll = new Query;
-		selectAll.where = '"status"=1';
-		gooseFL.selectFeatures(selectAll,FeatureLayer.SELECTION_NEW);		
-        
+		selectAll.where = '"status"=0';
+		gooseFL.selectFeatures(selectAll,FeatureLayer.SELECTION_NEW);
+
         centerMapURL();
-        
-	}  
+
+	}
 });
 
 function pauseEtiquetteCarousel(){
