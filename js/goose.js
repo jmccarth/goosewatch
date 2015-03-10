@@ -1,13 +1,14 @@
 //Globals
 var map;
-var gooseNestsURL = "http://services2.arcgis.com/rEyyACsbHLGwNRQS/arcgis/rest/services/gw_submissions/FeatureServer/0";
+var gooseNestsSubmitURL = "http://services2.arcgis.com/rEyyACsbHLGwNRQS/arcgis/rest/services/gw_submissions/FeatureServer/0?token=_tRUxNA5B9tklre8Hqwf3bHYERJoIshc6albG6Gx2LJLTusEPAN6J7T2dheUKvJWj065AXobNRpKPg1_Jq4R3Ej-3nt_M-qiueZNBJ1e7nFqJ-qoFnHv6OTnuv8vwAGrpmZ3F7R1MfvPhOIMBJKhGg..";
+var gooseNestsViewURL = "http://services2.arcgis.com/rEyyACsbHLGwNRQS/arcgis/rest/services/GooseWatch_Public/FeatureServer/0";
 var geometryServiceURL = "http://env-gisdev1.uwaterloo.ca:6080/arcgis/rest/services/Utilities/Geometry/GeometryServer";
 var routeTaskURL = "http://env-gisdev1.uwaterloo.ca:6080/arcgis/rest/services/Campus/uw_route/NAServer/Route"; //TODO: Token, publish somewhere permanent
 var extentLayerURL = "https://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/UW_Buildings/FeatureServer/0";
 var uwBldgsURL = "https://api.uwaterloo.ca/v2/buildings/list.json?key=cb63602dd1fd2a14332405f8613b68ed&output=json&callback=populateBuildings&jsonp=?";
-// var submittedPicsURL = "http://env-gisdev1.uwaterloo.ca:6080/arcgis/rest/services/goosewatch/gw14_public/FeatureServer/0"; //TODO: Token
-var submittedPicsURL = "http://services2.arcgis.com/rEyyACsbHLGwNRQS/arcgis/rest/services/GooseWatch_Picture_Submissions/FeatureServer/0"; //TODO: Token
+var submittedPicsURL = "http://services2.arcgis.com/rEyyACsbHLGwNRQS/arcgis/rest/services/GooseWatch_Picture_Submissions/FeatureServer/0?token=_tRUxNA5B9tklre8Hqwf3bHYERJoIshc6albG6Gx2LJLTusEPAN6J7T2dheUKvJWj065AXobNRpKPg1_Jq4R3Ej-3nt_M-qiueZNBJ1e7nFqJ-qoFnHv6OTnuv8vwAGrpmZ3F7R1MfvPhOIMBJKhGg..";
 var gooseFL;
+var gooseEditFL;
 var x, y;
 var offCampusBuildings = ["AAC","AAR","PHR","ARC","GA","HSC","WSS","180King","RAC","RA2"];
 var buildings;
@@ -41,9 +42,6 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
             if (document.URL.indexOf(tokens[0]) > -1){
                 routeToken = tokens[1];
                 gwToken = tokens[2];
-                //gooseNestsURL = gooseNestsURL + gwToken;
-                //submittedPicsURL = submittedPicsURL + gwToken;
-                //routeTaskURL = routeTaskURL + gwToken;
             }
         });
     });
@@ -130,8 +128,11 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
         var scaleDependentRenderer = new ScaleDependentRenderer();
         scaleDependentRenderer.setRendererInfos(rendererInfos);
 		//Create the goose nest feature layer
+
+
+
 		//Using MODE_SELECTION because it's the only way I can find to make sure the nests are loaded before making buffers
-		gooseFL = new FeatureLayer(gooseNestsURL,{
+		gooseFL = new FeatureLayer(gooseNestsViewURL,{
 			mode: FeatureLayer.MODE_SELECTION,
 			outFields: ["*"]
 		});
@@ -139,8 +140,14 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 
 		//When the features are selected create the nest buffers
 		gooseFL.on("selection-complete",makeNestBuffers);
+
+    gooseEditFL = new FeatureLayer(gooseNestsSubmitURL,{
+      mode: FeatureLayer.MODE_SELECTION,
+      outFields: ["*"]
+    });
+
 		//Add attachments if they exist once a new feature is created
-		gooseFL.on("edits-complete",attachPhoto);
+		gooseEditFL.on("edits-complete",attachPhoto);
         //Add attachments when a new photo is submitted
         submittedPicsFL.on("edits-complete",attachNewPhoto);
 
@@ -248,7 +255,8 @@ require(["esri/map", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/
 
 		//Select all nests to get them on the map
 		var selectAll = new Query;
-		selectAll.where = '"status"=0';
+		// selectAll.where = '"status"=0';
+    selectAll.where = '1=1';
 		gooseFL.selectFeatures(selectAll,FeatureLayer.SELECTION_NEW);
 
         centerMapURL();
