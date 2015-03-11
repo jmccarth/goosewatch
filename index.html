@@ -1,480 +1,491 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta property="og:title" content="Goose Watch '14" />
-        <meta property="og:url" content="http://goose-watch.uwaterloo.ca/" />
-        <meta property="og:description" content="They're back! Give our geese friends & nests some extra space this spring. Check out the #UWaterloo #goosewatch14 map" />
-        <meta property="og:site_name" content="Goose Watch '14" />
-        <meta property="og:image" content="http://goose-watch.uwaterloo.ca/img/fb_thumbnail.png" />
-		<title>Goose Watch '14</title>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta property="og:title" content="Goose Watch '15" />
+	<meta property="og:url" content="http://goose-watch.uwaterloo.ca/" />
+	<meta property="og:description" content="They're back! Give our geese friends & nests some extra space this spring. Check out the #UWaterloo #goosewatch15 map" />
+	<meta property="og:site_name" content="Goose Watch '15" />
+	<meta property="og:image" content="http://goose-watch.uwaterloo.ca/img/fb_thumbnail.png" />
+	<title>Goose Watch '15</title>
 
-		<!-- Bootstrap CSS -->
-		<link href="css/bootstrap.min.css" rel="stylesheet">
-		<link href="css/goose.css" rel="stylesheet">
-        <link href="css/share.css" rel="stylesheet">
-		<!--<link href="css/bootstrap-theme.min.css" rel="stylesheet">-->
-		<!-- FontAwesome CSS -->
-		<link rel="stylesheet" href="font-awesome-4.0.3/css/font-awesome.min.css">
-		<!-- Esri CSS -->
-		<link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.8/js/esri/css/esri.css">
+	<!-- Bootstrap CSS -->
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/goose.css" rel="stylesheet">
+	<link href="css/share.css" rel="stylesheet">
+	<!--<link href="css/bootstrap-theme.min.css" rel="stylesheet">-->
+	<!-- FontAwesome CSS -->
+	<link rel="stylesheet" href="font-awesome-4.0.3/css/font-awesome.min.css">
+	<!-- Esri CSS -->
+	<link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.8/js/esri/css/esri.css">
 
-		<!-- ESRI JS API -->
-		<script src="http://js.arcgis.com/3.8/"></script>
+	<!-- ESRI JS API -->
+	<script src="http://js.arcgis.com/3.8/"></script>
 
-		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-		<!--[if lt IE 9]>
-		  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-		  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-		<![endif]-->
-		<script src="js/goose.js"></script>
-	</head>
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
+	<script src="js/goose.js"></script>
+</head>
 
-	<body class="goose">
+<body class="goose">
 
-        <!-- Facebook stuff -->
-        <div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&status=0";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+	<!-- Facebook stuff -->
+	<div id="fb-root"></div>
+	<script>(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&status=0";
+		fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));</script>
 
-		<div class="bar topbar">
-			<div class="split-container">
-				<!--<div class="cell one-quarter text-left">
-					<a class="big" href="http://uwaterloo.ca"><img alt="University of Waterloo" src="img/uWaterlooLogo_white.svg" /></a>
-				</div>
-				<div class="cell goosewatch text-center">
-					<a class="big" href="#"><img alt="Goose Watch '14" src="img/GooseMapLogo.svg" /></a>
-				</div>
-				<div class="cell one-quarter text-right">
-					<a class="big" href="https://twitter.com/#!/search/%23goosewatch14"><img alt="#GooseWatch'14" src="img/GooseHashTag.svg" /></a>
-				</div>-->
-				<div class="cell one-half text-left">
-					<a class="big" href="http://uwaterloo.ca"><img alt="University of Waterloo" src="img/uWaterlooLogo_white.svg" /></a>
-				</div>
-				<div class="cell one-half text-right">
-					<a class="big" href="#"><img alt="Goose Watch '14" src="img/GooseMapLogo.svg" /></a>
-				</div>
+	<div class="bar topbar">
+		<div class="split-container">
+			<div class="cell one-half text-left">
+				<a class="big" href="http://uwaterloo.ca"><img alt="University of Waterloo" src="img/uWaterlooLogo_white.svg" /></a>
+			</div>
+			<div class="cell one-half text-right">
+				<a class="big" href="#"><img alt="Goose Watch '15" src="img/GooseMapLogo.svg" /></a>
 			</div>
 		</div>
+	</div>
 
-		<div class="map" id="mapDiv">
-            <div id="nestDescriptions" class="hidden"></div>
-			<div class="btns">
-				<a id="submitButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#addLocationModal">Submit a Nest</a>
-				<a id="routeButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#findRouteModal">Find a Route</a>
-				<a id="shareButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#shareModal" onclick="generateShareURL()">Share</a>
-			</div>
-            <a id="moreInfo" href="#" data-toggle="modal" data-target="#infoModal"><i class="fa fa-question-circle"></i></a>
+	<div class="map" id="mapDiv">
+		<div id="nestDescriptions" class="hidden"></div>
+		<div class="btns">
+			<a id="submitButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#addLocationModal">Submit a Nest</a>
+			<a id="routeButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#findRouteModal">Find a Route</a>
+			<a id="shareButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#shareModal" onclick="generateShareURL()">Share</a>
 		</div>
+		<a id="moreInfo" href="#" data-toggle="modal" data-target="#infoModal"><i class="fa fa-question-circle"></i></a>
+	</div>
 
-		<div class="bar bottombar">
-			<div class="split-container">
-				<div class="cell left text-left">
-					<a class="big" href="https://uwaterloo.ca/student-success/"><img alt="uWaterloo Student Success Office" src="img/SuccessOfficeLogo_black.svg" /></a>
+	<div class="bar bottombar">
+		<div class="split-container">
+			<div class="cell left text-left">
+				<a class="big" href="https://uwaterloo.ca/student-success/"><img alt="uWaterloo Student Success Office" src="img/SuccessOfficeLogo_black.svg" /></a>
+			</div>
+			<div class="etiquette middle nopad text-center">
+				<div id="carousel" class="carousel slide" data-ride="carousel">
+
+					<!-- Wrapper for slides -->
+					<div class="carousel-inner">
+						<div class="item active">
+							<div class="item-inner">
+								<div>
+									<strong>Goose</strong> Nest Etiquette
+								</div>
+							</div>
+						</div>
+						<div class="item">
+							<div class="item-inner">
+								<div>
+									Maintain direct <strong>eye contact</strong> and keep your chest and face pointed at the goose.
+								</div>
+							</div>
+						</div>
+						<div class="item">
+							<div class="item-inner">
+								<div>
+									If the goose acts aggressively, calmly and slowly <strong>back away</strong>.
+								</div>
+							</div>
+						</div>
+						<div class="item">
+							<div class="item-inner">
+								<div>
+									Don't act hostile or <strong>show fear</strong>.
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Controls -->
+					<a class="left carousel-control" href="#carousel" data-slide="prev">
+						<span class="glyphicon glyphicon-chevron-left"></span>
+					</a>
+					<a class="right carousel-control" href="#carousel" data-slide="next">
+						<span class="glyphicon glyphicon-chevron-right"></span>
+					</a>
 				</div>
-				<div class="etiquette middle nopad text-center">
-					<div id="carousel" class="carousel slide" data-ride="carousel">
+			</div>
+			<div class="cell right text-right">
+				<a class="big" href="http://uwaterloo.ca/mad"><img style="height: 60%" alt="Built By MAD" src="img/BuiltByMad_black.svg" /></a>
+			</div>
+		</div>
+	</div>
 
-					  <!-- Wrapper for slides -->
-						<div class="carousel-inner">
-							<div class="item active">
-								<div class="item-inner">
-									<div>
-										<strong>Goose</strong> Nest Etiquette
-									</div>
+	<!-- Modal form for adding a location -->
+	<div class="modal fade" id="addLocationModal" tabindex="-1" role="dialog" aria-labelledby="addLocLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 class="modal-title" id="addLocLabel">Submit a nest</h3>
+				</div>
+				<div class="modal-body">
+					<form id="addNestForm">
+
+						<div class="form-group">
+							<div class="btn-group btn-group-justified btn-group-lg">
+								<div class="btn-group">
+									<button type="button" class="click btn btn-default" data-dismiss="modal" onclick="enablePointSelection()">Click On Map</button>
 								</div>
-							</div>
-                            <div class="item">
-                            	<div class="item-inner">
-                            		<div>
-										Maintain direct <strong>eye contact</strong> and keep your chest and face pointed at the goose.
-									</div>
-								</div>
-							</div>
-							<div class="item">
-								<div class="item-inner">
-									<div>
-										If the goose acts aggressively, calmly and slowly <strong>back away</strong>.
-									</div>
-								</div>
-							</div>
-							<div class="item">
-								<div class="item-inner">
-									<div>
-										Don't act hostile or <strong>show fear</strong>.
-									</div>
+								<div class="btn-group">
+									<button id="locationLink" type="button" class="location btn btn-default" onclick="locateUser()">Use My Location</button>
 								</div>
 							</div>
 						</div>
 
-					  <!-- Controls -->
-						<a class="left carousel-control" href="#carousel" data-slide="prev">
+						<div class="form-group">
+							<div class="input-group">
+								<span id="mapMarker" class="input-group-addon"><i class="fa fa-map-marker"></i></span>
+								<input id="coords" disabled="true" type="text" placeholder="" class="form-control"/>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-comment"></i></span>
+								<input id="locDesc" type="text" placeholder="Give us some details (ex. Courtyard, SLC)" class="form-control"/>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-user"></i></span>
+								<input id="submitter" type="text" placeholder="Name (optional)" class="form-control"/>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-twitter"></i></span>
+								<input id="twitterHandle" type="text" placeholder="Twitter handle (optional)" class="form-control"/>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+								<input id="emailAddress" type="text" placeholder="Email address (optional)" class="form-control"/>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-camera"></i></span>
+								<input type="file" name="attachment" class="form-control" id="attachment" accept="image/*;capture=camera" />
+							</div>
+							Photos must be 10 MB or less to be accepted
+						</div>
+
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#postSubmissionModal" data-dismiss="modal" id="submitNest" disabled=true onclick="saveFeature()">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Post-Submit Modal -->
+	<div class="modal fade" id="postSubmissionModal" tabindex="-1" role="dialog" aria-labelledby="postSubmissionLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="findRouteLabel">Thanks for your submission to Goose Watch '15!</h4>
+				</div>
+				<div class="modal-body">
+					<p>
+						We'll review your submission before adding it to the map. If you shared your contact information, we'll be in touch when the map is updated.
+					</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Post Submit Photo Modal -->
+	<div class="modal fade" id="postPhotoSubmissionModal" tabindex="-1" role="dialog" aria-labelledby="postPhotoSubmissionLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="postPhotoSubmissionLabel">Thanks for submitting a photo to Goose Watch '15!</h4>
+				</div>
+				<div class="modal-body">
+					<div id="photoResponse">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal form for finding a route -->
+	<div class="modal fade" id="findRouteModal" tabindex="-1" role="dialog" aria-labelledby="findRouteLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 class="modal-title" id="findRouteLabel">Find Route</h3>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<label for="buildingSelectorA">From:</label>
+							<select id="buildingSelectorA" class="form-control">
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="buildingSelectorB">To:</label>
+							<select id="buildingSelectorB" class="form-control">
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="fearSelector">Comfort Level</label>
+							<select id="fearSelector" class="form-control">
+								<option value="0">I'm comfortable near nests</option>
+								<option value="1">I'm cautious</option>
+								<option value="2">I want to keep my distance</option>
+							</select>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="validateAndAddStops()">Find Route</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- modal for new photo -->
+	<div id="newPhotoModal" class="modal fade">
+		<div class="modal-dialog">
+
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 class="modal-title" id="newPhotoLabel">Submit a New Photo</h3>
+				</div>
+				<div class="modal-body">
+					<form id="addPhotoToNestForm">
+						<input type="hidden" id="nestOID" />
+						<input type="hidden" id="nestX" />
+						<input type="hidden" id="nestY" />
+						<div class="form-group">
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-camera"></i></span>
+								<input type="file" name="attachment" class="form-control" id="attachment" accept="image/*;capture=camera" /><br>
+							</div>
+							Photos must be 10 MB or less to be accepted
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="addNewPhoto()">Submit Photo</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Nest Description -->
+	<div id="nestModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 class="modal-title">Goose Nest</h3>
+				</div>
+				<div class="modal-body">
+					<h4 class="text-center" id="nestDescription"></h4>
+					<table class="table">
+						<tbody>
+							<tr>
+								<th>Date</th>
+								<td id="nestDate"></td>
+							</tr>
+							<tr>
+								<th>Submitted by</th>
+								<td id="nestSubmitter"></td>
+							</tr>
+							<tr>
+								<th>Twitter</th>
+								<td id="nestTwitter"></td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div id="singleImagePlaceholder"></div>
+
+					<div id="nestImagePlaceholder" class="carousel slide" style="width: 400px;margin:0 auto;" data-ride="carousel">
+
+						<!-- Wrapper for slides -->
+						<div id="carouselSlides" class="carousel-inner">
+							<div class="item active"></div>
+						</div>
+
+						<!-- Controls -->
+						<a class="left carousel-control" href="#nestImagePlaceholder" data-slide="prev">
 							<span class="glyphicon glyphicon-chevron-left"></span>
 						</a>
-						<a class="right carousel-control" href="#carousel" data-slide="next">
+						<a class="right carousel-control" href="#nestImagePlaceholder" data-slide="next">
 							<span class="glyphicon glyphicon-chevron-right"></span>
 						</a>
 					</div>
+
+
 				</div>
-				<div class="cell right text-right">
-					<a class="big" href="http://uwaterloo.ca/mad"><img style="height: 60%" alt="Built By MAD" src="img/BuiltByMad_black.svg" /></a>
-				</div>
-			</div>
-		</div>
 
-		<!-- Modal form for adding a location -->
-		<div class="modal fade" id="addLocationModal" tabindex="-1" role="dialog" aria-labelledby="addLocLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h3 class="modal-title" id="addLocLabel">Submit a nest</h3>
-					</div>
-					<div class="modal-body">
-						<form id="addNestForm">
 
-							<div class="form-group">
-								<div class="btn-group btn-group-justified btn-group-lg">
-									<div class="btn-group">
-										<button type="button" class="click btn btn-default" data-dismiss="modal" onclick="enablePointSelection()">Click On Map</button>
-									</div>
-									<div class="btn-group">
-										<button id="locationLink" type="button" class="location btn btn-default" onclick="locateUser()">Use My Location</button>
-									</div>
-								</div>
-							</div>
-
-							<div class="form-group">
-								<div class="input-group">
-									<span id="mapMarker" class="input-group-addon"><i class="fa fa-map-marker"></i></span>
-									<input id="coords" disabled="true" type="text" placeholder="" class="form-control"/>
-								</div>
-							</div>
-
-							<div class="form-group">
-								<div class="input-group">
-									<span class="input-group-addon"><i class="fa fa-comment"></i></span>
-									<input id="locDesc" type="text" placeholder="Give us some details (ex. Courtyard, SLC)" class="form-control"/>
-								</div>
-							</div>
-
-							<div class="form-group">
-								<div class="input-group">
-									<span class="input-group-addon"><i class="fa fa-user"></i></span>
-									<input id="submitter" type="text" placeholder="Name (optional)" class="form-control"/>
-								</div>
-							</div>
-
-							<div class="form-group">
-								<div class="input-group">
-									<span class="input-group-addon"><i class="fa fa-twitter"></i></span>
-									<input id="twitterHandle" type="text" placeholder="Twitter handle (optional)" class="form-control"/>
-								</div>
-							</div>
-
-                            <div class="form-group">
-								<div class="input-group">
-									<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-									<input id="emailAddress" type="text" placeholder="Email address (optional)" class="form-control"/>
-								</div>
-							</div>
-
-							<div class="form-group">
-								<div class="input-group">
-									<span class="input-group-addon"><i class="fa fa-camera"></i></span>
-									<input type="file" name="attachment" class="form-control" id="attachment" accept="image/*;capture=camera" />
-								</div>
-							</div>
-
-						</form>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#postSubmissionModal" data-dismiss="modal" id="submitNest" disabled=true onclick="saveFeature()">Submit</button>
-					</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" data-toggle="modal" data-target="#newPhotoModal">Submit New Photo</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
+	</div>
 
-		<!-- Post-Submit Modal -->
-		<div class="modal fade" id="postSubmissionModal" tabindex="-1" role="dialog" aria-labelledby="postSubmissionLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4 class="modal-title" id="findRouteLabel">Thanks for your submission to Goose Watch '14!</h4>
-					</div>
-					<div class="modal-body">
-						<p>
-							We'll review your submission before adding it to the map. If you shared your contact information, we'll be in touch when the map is updated.
-						</p>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					</div>
+	<!-- SHARE MODAL -->
+	<div id="shareModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 class="modal-title">Share</h3>
 				</div>
-			</div>
-		</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-sm-12">
+							<h4>Help us spread the word about Goose Watch '15</h4>
+							<!-- Share buttons come from here: http://ostr.io/code/html-social-like-share-buttons-no-javascript.html -->
+							<div class="btn-group btn-group-justified">
+								<a class="btn btn-default" target="_blank" title="On Facebook" href="http://www.facebook.com/sharer.php?u=http://ow.ly/umXgV">
+									<i class="fa fa-facebook fa-lg fb"></i>
+								</a>
 
-		<!-- Modal form for finding a route -->
-		<div class="modal fade" id="findRouteModal" tabindex="-1" role="dialog" aria-labelledby="findRouteLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h3 class="modal-title" id="findRouteLabel">Find Route</h3>
-					</div>
-					<div class="modal-body">
-						<form>
-							<div class="form-group">
-								<label for="buildingSelectorA">From:</label>
-								<select id="buildingSelectorA" class="form-control">
-								</select>
+								<a class="btn btn-default" target="_blank" title="On Twitter" href="http://twitter.com/share?url=http://ow.ly/umXgV&text=They%27re+back!+Give+our+geese+friends+%26+nests+some+extra+space+this+spring.+Check+out+the+%23UWaterloo+%23goosewatch15+map">
+									<i class="fa fa-twitter fa-lg tw"></i>
+								</a>
 							</div>
-							<div class="form-group">
-								<label for="buildingSelectorB">To:</label>
-								<select id="buildingSelectorB" class="form-control">
-								</select>
+						</div>
+					</div>
+					<br />
+					<div id="sharePanel" class="row">
+						<div class="col-sm-12">
+							<h4>Link to Goose Watch '15</h4>
+							<div class="input-group">
+								<span class="input-group-addon">
+									<i class="fa fa-link"></i>
+								</span>
+								<input type="text" class="form-control" value="http://goose-watch.uwaterloo.ca" />
 							</div>
-							<div class="form-group">
-								<label for="fearSelector">Comfort Level</label>
-								<select id="fearSelector" class="form-control">
-									<option value="0">I'm comfortable near nests</option>
-									<option value="1">I'm cautious</option>
-									<option value="2">I want to keep my distance</option>
-								</select>
+							<h4>Link to Current Map View</h4>
+							<div class="input-group">
+								<span class="input-group-addon">
+									<i class="fa fa-link"></i>
+								</span>
+								<input id="shareURL" type="text" class="form-control" />
 							</div>
-						</form>
+						</div>
 					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="validateAndAddStops()">Find Route</button>
-					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
-
-            <!-- modal for new photo -->
-        <div id="newPhotoModal" class="modal fade">
-            <div class="modal-dialog">
-
-                <div class="modal-content">
-                    <div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h3 class="modal-title" id="newPhotoLabel">Submit a New Photo</h3>
-					</div>
-                    <div class="modal-body">
-                    <form id="addPhotoToNestForm">
-                        <input type="hidden" id="nestOID" />
-                        <input type="hidden" id="nestX" />
-                        <input type="hidden" id="nestY" />
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fa fa-camera"></i></span>
-                                    <input type="file" name="attachment" class="form-control" id="attachment" accept="image/*;capture=camera" />
-                                </div>
-
-                        </div>
-                    </form>
-                        </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="addNewPhoto()">Submit Photo</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Nest Description -->
-		<div id="nestModal" class="modal fade">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					  <div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h3 class="modal-title">Goose Nest</h3>
-					  </div>
-					  <div class="modal-body">
-					  	<h4 class="text-center" id="nestDescription"></h4>
-						<table class="table">
-							<tbody>
-								<tr>
-									<th>Date</th>
-									<td id="nestDate"></td>
-								</tr>
-								<tr>
-									<th>Submitted by</th>
-									<td id="nestSubmitter"></td>
-								</tr>
-								<tr>
-									<th>Twitter</th>
-									<td id="nestTwitter"></td>
-								</tr>
-							</tbody>
-						</table>
-
-                        <div id="singleImagePlaceholder"></div>
-
-						<div id="nestImagePlaceholder" class="carousel slide" style="width: 400px;margin:0 auto;" data-ride="carousel">
-
-                              <!-- Wrapper for slides -->
-                              <div id="carouselSlides" class="carousel-inner">
-                                  <div class="item active"></div>
-                              </div>
-
-                              <!-- Controls -->
-                              <a class="left carousel-control" href="#nestImagePlaceholder" data-slide="prev">
-                                <span class="glyphicon glyphicon-chevron-left"></span>
-                              </a>
-                              <a class="right carousel-control" href="#nestImagePlaceholder" data-slide="next">
-                                <span class="glyphicon glyphicon-chevron-right"></span>
-                              </a>
-                          </div>
+	</div>
 
 
-					  </div>
+	<!-- More Info Modal -->
+	<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 class="modal-title" id="findRouteLabel">Goose Watch Info</h3>
+				</div>
+				<div class="modal-body">
+					<h4>About</h4>
+					<p>Goose Watch is a collaboration between <a href="https://uwaterloo.ca/mad">Mapping, Analysis, and Design</a> and the <a href="https://uwaterloo.ca/student-success/">Student Success Office</a>. You can use the map to view and report goose nest locations or to find a route across campus based on your comfort level around nesting geese. We've also provided a few goose nest etiquette tips to help everyone share campus space this spring.</p>
+					<p>We're also maitaining <a href="https://uwaterloo.ca/student-success/goose-watch-2015-nest-listing">a tabular view of the data</a>.</p>
 
+					<p>If you have comments, questions, or bug reports, contact James McCarthy via <a href="mailto:jmccarth@uwaterloo.ca">email</a> or <a href="http://twitter.com/JD_McCarthy">Twitter</a>.</p>
+					<h4>How does it work?</h4>
+					<ul>
+						<li>The Goose Watch source code is available <a href="https://github.com/jmccarth/goosewatch">on GitHub</a></li>
+						<li>This project uses data from the <a href="http://uwaterloo.ca/open-data">uWaterloo Open Data API</a>. Approved nest submissions have been made available through the API.</li>
 
-					  <div class="modal-footer">
-            	<button type="button" class="btn btn-default" data-dismiss="modal" data-toggle="modal" data-target="#newPhotoModal">Submit New Photo</button>
-							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					  </div>
+					</ul>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
-
-        <!-- SHARE MODAL -->
-        <div id="shareModal" class="modal fade">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h3 class="modal-title">Share</h3>
-					</div>
-					<div class="modal-body">
-					  	<div class="row">
-					  		<div class="col-sm-12">
-	                          	<h4>Help us spread the word about Goose Watch '14</h4>
-	                          	<!-- Share buttons come from here: http://ostr.io/code/html-social-like-share-buttons-no-javascript.html -->
-		                        <div class="btn-group btn-group-justified">
-									<a class="btn btn-default" target="_blank" title="On Facebook" href="http://www.facebook.com/sharer.php?u=http://ow.ly/umXgV">
-										<i class="fa fa-facebook fa-lg fb"></i>
-									</a>
-
-									<a class="btn btn-default" target="_blank" title="On Twitter" href="http://twitter.com/share?url=http://ow.ly/umXgV&text=They%27re+back!+Give+our+geese+friends+%26+nests+some+extra+space+this+spring.+Check+out+the+%23UWaterloo+%23goosewatch14+map">
-										<i class="fa fa-twitter fa-lg tw"></i>
-									</a>
-		                       	</div>
-                        	</div>
-                        </div>
-                        <br />
-                        <div id="sharePanel" class="row">
-                            <div class="col-sm-12">
-                            	<h4>Link to Goose Watch '14</h4>
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-link"></i>
-                                    </span>
-                                    <input type="text" class="form-control" value="http://goose-watch.uwaterloo.ca" />
-                                </div>
-                                <h4>Link to Current Map View</h4>
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-link"></i>
-                                    </span>
-                                    <input id="shareURL" type="text" class="form-control" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
+	</div>
 
 
-        <!-- More Info Modal -->
-		<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h3 class="modal-title" id="findRouteLabel">Goose Watch Info</h3>
-					</div>
-					<div class="modal-body">
-                        <h4>About</h4>
-                        <p>Goose Watch is a collaboration between <a href="https://uwaterloo.ca/mad">Mapping, Analysis, and Design</a> and the <a href="https://uwaterloo.ca/student-success/">Student Success Office</a>. You can use the map to view and report goose nest locations or to find a route across campus based on your comfort level around nesting geese. We've also provided a few goose nest etiquette tips to help everyone share campus space this spring.</p>
-                        <p>We're also maitaining <a href="https://uwaterloo.ca/student-success/goose-watch-2014-nest-listing">a tabular view of the data</a>.</p>
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="https://code.jquery.com/jquery.js"></script>
 
-                        <p>If you have comments, questions, or bug reports, contact James McCarthy via <a href="mailto:jmccarth@uwaterloo.ca">email</a> or <a href="http://twitter.com/JD_McCarthy">Twitter</a>.</p>
-                        <h4>How does it work?</h4>
-                        <ul>
-                            <li>The Goose Watch source code is available <a href="https://github.com/jmccarth/goosewatch">on GitHub</a></li>
-                            <li>This project uses data from the <a href="http://uwaterloo.ca/open-data">uWaterloo Open Data API</a>. Approved nest submissions have been made available through the API.</li>
+	<script>
+	var $body = $('body');
 
-                        </ul>
+	$(window).on('resize orientationchange', function() {
+		$('<style>body{}</style>').appendTo($body).remove();
+	});
 
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
+	$(function() {
+		$('<style>body{}</style>').appendTo($body).remove();
 
+		//if ((window.ActiveXObject) && "ActiveXObject") {
+		if (!!navigator.userAgent.match(/Trident.*rv[ :]*11\./)) {
+			$body.addClass('ie11');
+		}
+	});
 
-		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-		<script src="https://code.jquery.com/jquery.js"></script>
+	</script>
 
-		<script>
-			var $body = $('body');
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script src="js/bootstrap.min.js"></script>
+	<!-- modernizr -->
+	<script src="js/modernizr-dev.js"></script>
+	<!-- Slider JS -->
+	<script src="js/bootstrap-slider.js"></script>
+	<!-- More Brains -->
+	<script src="js/util.js"></script>
+	<script src="js/navigation.js"></script>
+	<script src="js/reporting.js"></script>
 
-			$(window).on('resize orientationchange', function() {
-				$('<style>body{}</style>').appendTo($body).remove();
-			});
+	<!-- Google Analytics -->
+	<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-			$(function() {
-				$('<style>body{}</style>').appendTo($body).remove();
+	ga('create', 'UA-49134443-1', 'uwaterloo.ca');
+	ga('send', 'pageview');
 
-				//if ((window.ActiveXObject) && "ActiveXObject") {
-				if (!!navigator.userAgent.match(/Trident.*rv[ :]*11\./)) {
-					$body.addClass('ie11');
-				}
-			});
-
-		</script>
-
-		<!-- Include all compiled plugins (below), or include individual files as needed -->
-		<script src="js/bootstrap.min.js"></script>
-		<!-- modernizr -->
-		<script src="js/modernizr-dev.js"></script>
-		<!-- Slider JS -->
-		<script src="js/bootstrap-slider.js"></script>
-		<!-- More Brains -->
-        <script src="js/util.js"></script>
-		<script src="js/navigation.js"></script>
-		<script src="js/reporting.js"></script>
-
-        <!-- Google Analytics -->
-        <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-49134443-1', 'uwaterloo.ca');
-  ga('send', 'pageview');
-
-</script>
-	</body>
+	</script>
+</body>
 </html>
