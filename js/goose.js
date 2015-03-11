@@ -4,7 +4,7 @@ var gooseNestsURL = "http://services2.arcgis.com/rEyyACsbHLGwNRQS/arcgis/rest/se
 var geometryServiceURL = "http://env-gisdev1.uwaterloo.ca:6080/arcgis/rest/services/Utilities/Geometry/GeometryServer";
 var routeTaskURL = "http://env-gisdev.uwaterloo.ca/arcgis_public/rest/services/goosewatch15/gw15_route/NAServer/Route";
 var extentLayerURL = "https://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/UW_Buildings/FeatureServer/0";
-var uwBldgsURL = "https://api.uwaterloo.ca/v2/buildings/list.json?key=***REMOVED***&output=json&callback=populateBuildings&jsonp=?";
+var uwBldgsURL = "https://api.uwaterloo.ca/v2/buildings/list.json?key=cb63602dd1fd2a14332405f8613b68ed&output=json&callback=populateBuildings&jsonp=?";
 var submittedPicsURL = "http://services2.arcgis.com/rEyyACsbHLGwNRQS/arcgis/rest/services/GooseWatch_Picture_Submissions/FeatureServer/0?token=";
 var gooseFL;
 var x, y;
@@ -26,15 +26,26 @@ var alerted = false;
 var routeAttributionText = "Esri Canada, MappedIn, ";
 var routeAttribution = "";
 var submittedPicsFL;
+var uw_api_key;
+// var agol_client_id;
+// var agol_client_secret;
+var agol_token;
+
+
 
 require(["esri/map", "esri/config", "esri/arcgis/utils","esri/layers/FeatureLayer","esri/tasks/FeatureSet","esri/layers/GraphicsLayer","esri/symbols/SimpleMarkerSymbol","esri/symbols/SimpleLineSymbol","esri/tasks/RouteTask","esri/tasks/RouteParameters","esri/tasks/GeometryService","esri/tasks/query","esri/geometry/webMercatorUtils","esri/dijit/PopupTemplate","esri/dijit/PopupMobile","esri/renderers/SimpleRenderer","esri/renderers/ScaleDependentRenderer","esri/symbols/PictureMarkerSymbol","dojo/dom-construct","dojo/domReady!"], function(Map,esriConfig,arcgisUtils,FeatureLayer,FeatureSet,GraphicsLayer,SimpleMarkerSymbol,SimpleLineSymbol,RouteTask,RouteParameters,GeometryService,Query,webMercatorUtils,PopupTemplate,PopupMobile,SimpleRenderer,ScaleDependentRenderer,PictureMarkerSymbol,domConstruct){
 
-  // Proxy stuff
-  // esriConfig.defaults.io.proxyUrl = "http://env-gis-srv1.uwaterloo.ca/proxy/proxy.ashx";
-  //esriConfig.defaults.io.proxyUrl = "http://env-gisdev1.uwaterloo.ca/proxy.ashx";
-  //esriConfig.defaults.io.proxyUrl = "/proxy.ashx";
+
 
   esriConfig.defaults.io.corsEnabledServers.push("env-gisdev.uwaterloo.ca");
+
+  //Get various keys
+  $.getJSON("tokens.txt",function(data){
+    uw_api_key = data.uw_api_key;
+    var agol_client_id = data.agol_client_id;
+    var agol_client_secret = data.agol_client_secret;
+    getAGOLTokens(agol_client_id,agol_client_secret);
+  },function(error){console.log(error);});
 
   $('#carousel').carousel();
 
@@ -50,62 +61,59 @@ require(["esri/map", "esri/config", "esri/arcgis/utils","esri/layers/FeatureLaye
 
   gsvc = new GeometryService(geometryServiceURL);
 
-  //Get token from AGOL
-  var agol_token;
-  $.ajax({
-    type: "POST",
-    url: "https://www.arcgis.com/sharing/rest/oauth2/token/",
-    data: {
-      client_id: '***REMOVED***',
-      client_secret: '***REMOVED***',
-      grant_type: 'client_credentials'
-    },
-    success: function(data){
-      agol_token = JSON.parse(data)['access_token'];
+  function getAGOLTokens(agol_client_id, agol_client_secret){
+    //Get token from AGOL
+    $.ajax({
+      type: "POST",
+      url: "https://www.arcgis.com/sharing/rest/oauth2/token/",
+      data: {
+        client_id: agol_client_id, //TODO: Get from text file
+        client_secret: agol_client_secret, //TODO: Get from text file
+        grant_type: 'client_credentials'
+      },
+      success: function(data){
+        agol_token = JSON.parse(data)['access_token'];
+        gooseNestsURL += agol_token;
+        submittedPicsURL += agol_token;
+        initMap();
+      }
+    });
+  }
 
-      //console.log(agol_token);
-      gooseNestsURL += agol_token;
-      submittedPicsURL += agol_token;
+  function initMap(){
+    //Create nested feature set to hold nest buffers at three levels
+    buildings = new FeatureSet();
+    nestBuffers.push(new esri.tasks.FeatureSet());
+    nestBuffers.push(new esri.tasks.FeatureSet());
+    nestBuffers.push(new esri.tasks.FeatureSet());
 
-      //Create nested feature set to hold nest buffers at three levels
-      buildings = new FeatureSet();
-      nestBuffers.push(new esri.tasks.FeatureSet());
-      nestBuffers.push(new esri.tasks.FeatureSet());
-      nestBuffers.push(new esri.tasks.FeatureSet());
+    //Create the map
+    map = new Map("mapDiv",{
+      basemap: "topo",
+      center: [-80.542, 43.471],
+      zoom: 15,
+      minZoom: 15,
+      maxZoom: 19
+    });
 
-      //Create the map
-      map = new Map("mapDiv",{
-        basemap: "topo",
-        center: [-80.542, 43.471],
-        zoom: 15,
-        minZoom: 15,
-        maxZoom: 19
-      });
+    //Create a new lat/long point when the user clicks on the map (if in add point mode)
+    map.on("click",function(ev){
+      if(addPointMode){
+        var webmercPt = ev.mapPoint;
+        var llPt = webMercatorUtils.webMercatorToGeographic(webmercPt);
+        populateLocationFromClick(llPt);
+      }
+    });
 
-      //Create a new lat/long point when the user clicks on the map (if in add point mode)
-      map.on("click",function(ev){
-        if(addPointMode){
-          var webmercPt = ev.mapPoint;
-          var llPt = webMercatorUtils.webMercatorToGeographic(webmercPt);
-          populateLocationFromClick(llPt);
-        }
-      });
-
-      //Modify the data attribution text when the map changes
-      map.on("extent-change",function(ev){
-        $(".esriAttributionLastItem").text(routeAttribution +  $(".esriAttributionLastItem").text());
-      });
-
-
-      //Initialize map contents once map has loaded
-      map.on("load", initLayers);
-    }
-  })
+    //Modify the data attribution text when the map changes
+    map.on("extent-change",function(ev){
+      $(".esriAttributionLastItem").text(routeAttribution +  $(".esriAttributionLastItem").text());
+    });
 
 
-
-
-
+    //Initialize map contents once map has loaded
+    map.on("load", initLayers);
+  }
 
 
 
@@ -243,7 +251,7 @@ require(["esri/map", "esri/config", "esri/arcgis/utils","esri/layers/FeatureLaye
 
     // Get building data from uWaterloo API
 
-    var uw_api_key = "***REMOVED***"; //TODO: Get this from text file
+    //var uw_api_key = uw_api_key; //TODO: Get this from text file
     var bldg_url = "http://api.uwaterloo.ca/v2/buildings/list.json?key=" + uw_api_key;
     $.ajax({
       dataType: "json",

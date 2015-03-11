@@ -1,0 +1,5 @@
+{
+  'uw_api_key': 'goes here',
+  'agol_client_id': 'goes here',
+  'agol_client_secret': 'goes here'
+}
