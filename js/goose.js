@@ -1,11 +1,11 @@
 //Globals
 var map;
-var gooseNestsURL = "http://services2.arcgis.com/rEyyACsbHLGwNRQS/arcgis/rest/services/gw_submissions/FeatureServer/0?token=";
+var gooseNestsURL = "http://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/GooseWatch_2015_Submissions/FeatureServer/0?token=";
 var geometryServiceURL = "http://env-gisdev1.uwaterloo.ca:6080/arcgis/rest/services/Utilities/Geometry/GeometryServer";
 var routeTaskURL = "http://env-gisdev.uwaterloo.ca/arcgis_public/rest/services/goosewatch15/gw15_route/NAServer/Route";
 var extentLayerURL = "https://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/UW_Buildings/FeatureServer/0";
 var uwBldgsURL = "https://api.uwaterloo.ca/v2/buildings/list.json?key=cb63602dd1fd2a14332405f8613b68ed&output=json&callback=populateBuildings&jsonp=?";
-var submittedPicsURL = "http://services2.arcgis.com/rEyyACsbHLGwNRQS/arcgis/rest/services/GooseWatch_Picture_Submissions/FeatureServer/0?token=";
+var submittedPicsURL = "http://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/GooseWatch_2015_Picture_Submissions/FeatureServer/0?token=";
 var gooseFL;
 var x, y;
 var offCampusBuildings = ["AAC","AAR","PHR","ARC","GA","HSC","WSS","180King","RAC","RA2"];

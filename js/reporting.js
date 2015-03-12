@@ -35,7 +35,7 @@ function addNewPhoto(){
 		var dateString = ((currentDate.getMonth() + 1) + "/" + currentDate.getDate() + "/" + currentDate.getFullYear());
 
 		//Convert global x and y (which are in lat/long) to Web Mercator
-		var p = new Point($("#nestX")[0].value,$("#nestY")[0].value,new SpatialReference({wkid:4326}));
+		var p = new Point($("#nestX")[0].value,$("#nestY")[0].value,new SpatialReference({wkid:102100}));
 
 		var g = new Graphic(p,null,{"status":"0","nestid":$("#nestOID")[0].value,"submitdate":dateString});
 		submittedPicsFL.applyEdits([g],null,null);
