@@ -8,7 +8,7 @@ var uwBldgsURL = "https://api.uwaterloo.ca/v2/buildings/list.json?key=cb63602dd1
 var submittedPicsURL = "http://services1.arcgis.com/DwLTn0u9VBSZvUPe/arcgis/rest/services/GooseWatch_2015_Picture_Submissions/FeatureServer/0?token=";
 var gooseFL;
 var x, y;
-var offCampusBuildings = ["AAC","AAR","PHR","ARC","GA","HSC","WSS","180King","RAC","RA2"];
+var offCampusBuildings = ["AAC","AAR","PHR","ARC","GA","HSC","WSS","180King","RAC","RA2","GSK","IHB"];
 var buildings;
 var results;
 var stopSymbol, routeSymbol;

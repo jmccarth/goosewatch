@@ -9,18 +9,20 @@ function populateBuildings(data){
 	//Loop through buildings returned from the API
 	dojo.forEach(data.data,function(value,index){
 		bldg = value.building_code;
-		if (offCampusBuildings.indexOf(bldg) == -1){
-			//Build option items
-			bldgDesc = value.building_code + " (" + value.building_name + ")";
-			dojo.byId("buildingSelectorA").options.add(new Option(bldgDesc,bldg));
-			dojo.byId("buildingSelectorB").options.add(new Option(bldgDesc,bldg));
+		if (value.latitude != null && value.longitude != null){
+			if (offCampusBuildings.indexOf(bldg) == -1){
+				//Build option items
+				bldgDesc = value.building_code + " (" + value.building_name + ")";
+				dojo.byId("buildingSelectorA").options.add(new Option(bldgDesc,bldg));
+				dojo.byId("buildingSelectorB").options.add(new Option(bldgDesc,bldg));
 
-			//Build a graphic feature for the building location
-			var pt = new esri.geometry.Point(value.longitude,value.latitude);
-			var sym = new esri.symbol.SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_SQUARE).setColor(new dojo.Color([255,0,0,0.5]));
-			var attr = {"Acronym":value.building_code,"Name":value.building_name};
-			var b = new esri.Graphic(pt,sym,attr);
-			buildings.features.push(b);
+				//Build a graphic feature for the building location
+				var pt = new esri.geometry.Point(value.longitude,value.latitude);
+				var sym = new esri.symbol.SimpleMarkerSymbol().setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_SQUARE).setColor(new dojo.Color([255,0,0,0.5]));
+				var attr = {"Acronym":value.building_code,"Name":value.building_name};
+				var b = new esri.Graphic(pt,sym,attr);
+				buildings.features.push(b);
+			}
 		}
 	});
 
