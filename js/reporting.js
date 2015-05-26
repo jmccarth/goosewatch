@@ -81,7 +81,8 @@ function populateLocationFromDevice(location){
 			$("#mapMarker")[0].style.color = "green";
 
 			//Enable submission
-			$("#submitNest")[0].disabled = false;
+			//NOTE: Re-enable this when we go live with submissions again
+			// $("#submitNest")[0].disabled = false;
 		}
 		else{
 			if(!alerted){
@@ -115,7 +116,8 @@ function populateLocationFromClick(pt){
 			disablePointSelection();
 
 			//Enable submission
-			$("#submitNest")[0].disabled = false;
+			//NOTE: Re-enable this when we go live with submissions again
+			//$("#submitNest")[0].disabled = false;
 		}
 		else{
 			alert("That point is not on the UWaterloo campus. Please try another point.");

@@ -159,8 +159,12 @@ html, body, .goose {
 	min-width:8em;
 	max-width:200px;
 	z-index:2;
-	top:10px;
+	top:60px;
 	right:10px;
+}
+
+.goose .map .alert{
+  margin-bottom: 0px;
 }
 
 .goose .map #moreInfo {

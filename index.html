@@ -56,8 +56,11 @@
 		</div>
 	</div>
 
+
+
 	<div class="map" id="mapDiv">
 		<div id="nestDescriptions" class="hidden"></div>
+		<div class="alert alert-warning" role="alert">Please Note: GooseWatch is closed to new submissions for the year and nest locations are no longer up to date.</div>
 		<div class="btns">
 			<a id="submitButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#addLocationModal">Submit a Nest</a>
 			<a id="routeButton" class="btn btn-primary btn-block" href="#" data-toggle="modal" data-target="#findRouteModal">Find a Route</a>
@@ -153,35 +156,35 @@
 						<div class="form-group">
 							<div class="input-group">
 								<span class="input-group-addon"><i class="fa fa-comment"></i></span>
-								<input id="locDesc" type="text" placeholder="Give us some details (ex. Courtyard, SLC)" class="form-control"/>
+								<input id="locDesc" disabled="true" type="text" placeholder="Give us some details (ex. Courtyard, SLC)" class="form-control"/>
 							</div>
 						</div>
 
 						<div class="form-group">
 							<div class="input-group">
 								<span class="input-group-addon"><i class="fa fa-user"></i></span>
-								<input id="submitter" type="text" placeholder="Name (optional)" class="form-control"/>
+								<input id="submitter" disabled="true" type="text" placeholder="Name (optional)" class="form-control"/>
 							</div>
 						</div>
 
 						<div class="form-group">
 							<div class="input-group">
 								<span class="input-group-addon"><i class="fa fa-twitter"></i></span>
-								<input id="twitterHandle" type="text" placeholder="Twitter handle (optional)" class="form-control"/>
+								<input id="twitterHandle" disabled="true" type="text" placeholder="Twitter handle (optional)" class="form-control"/>
 							</div>
 						</div>
 
 						<div class="form-group">
 							<div class="input-group">
 								<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-								<input id="emailAddress" type="text" placeholder="Email address (optional)" class="form-control"/>
+								<input id="emailAddress" disabled="true"  type="text" placeholder="Email address (optional)" class="form-control"/>
 							</div>
 						</div>
 
 						<div class="form-group">
 							<div class="input-group">
 								<span class="input-group-addon"><i class="fa fa-camera"></i></span>
-								<input type="file" name="attachment" class="form-control" id="attachment" accept="image/*;capture=camera" />
+								<input type="file" disabled="true" name="attachment" class="form-control" id="attachment" accept="image/*;capture=camera" />
 							</div>
 							Photos must be 10 MB or less to be accepted
 						</div>
@@ -190,7 +193,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#postSubmissionModal" data-dismiss="modal" id="submitNest" disabled=true onclick="saveFeature()">Submit</button>
+					<button type="button" disabled="true" class="btn btn-primary" data-toggle="modal" data-target="#postSubmissionModal" data-dismiss="modal" id="submitNest" disabled=true onclick="saveFeature()">Submit</button>
 				</div>
 			</div>
 		</div>
